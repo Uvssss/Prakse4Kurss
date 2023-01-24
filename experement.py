@@ -1,12 +1,13 @@
 import requests
 import json
-from datetime import datetime
+from datetime import datetime,timedelta
 from main import *
 from worker import *
 print('start')
 now=datetime.now()
 response = requests.get('https://www.nordpoolgroup.com/api/marketdata/page/59?currency=,,,EUR')
 dateOfInterest = now.strftime('%d-%m-%Y')
+
 jayson = json.loads (response.text)
 config = ConfigParser()
 config.read('config.ini')
@@ -27,7 +28,14 @@ for row in jayson ['data']['Rows'] :
             continue
         sSplit = row[ 'StartTime'].replace('T', ' ')  
         eSplit = row[ 'EndTime'].replace('T', ' ')    
+        startime=datetime.strptime(sSplit,"%Y-%m-%d %H:%M:%S")
+        endtime=datetime.strptime(eSplit,"%Y-%m-%d %H:%M:%S")
         msg=sSplit+ ' ' + '-' + ' ' + eSplit+ ' ' + 'Value: ' + dayData[ 'Value']
-        print (msg)
+        # print (msg)
+        sSplit=startime - timedelta(days=1)
+        eSplit=endtime - timedelta(days=1)
         value=dayData['Value'].replace(",",".")
-        insert_nordpool_prices(sSplit,eSplit,value)
+        value=float(value)
+        converted_val=value/1000
+        insert_nordpool_prices(sSplit,eSplit,converted_val)
+        create_consumtion(sSplit,eSplit)

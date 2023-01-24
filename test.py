@@ -1,5 +1,7 @@
 from worker import *
 from main import *
 
-records=select_prices()
-print(records)
+prices=select_prices()
+
+consumption=select_consumption()
+automaticsaving(prices,consumption)
