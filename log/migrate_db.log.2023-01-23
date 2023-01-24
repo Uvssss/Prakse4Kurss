@@ -1,0 +1,28 @@
+2023-01-23 16:10:25,218 - INFO - migrations : DB migration service
+2023-01-23 16:10:25,218 - INFO - migrations : Loading configuration from file
+2023-01-23 16:10:25,219 - INFO - migrations : DONE
+2023-01-23 16:10:25,285 - INFO - migrations : Connecting to MySQL DB
+2023-01-23 16:10:25,286 - INFO - migrations : Connected to MySQL database. MySQL Server version on 8.0.27
+2023-01-23 16:10:25,410 - INFO - migrations : Executing: 2023-01-23-0000001.sql
+2023-01-23 16:10:25,415 - ERROR - migrations : create table Electricity(
+	id int not null unique auto_increment,
+    `name` varchar(45) not null
+);
+2023-01-23 16:10:25,417 - ERROR - migrations : Problem executing sql query on DB: 1050 (42S01): Table 'electricity' already exists
+2023-01-23 16:10:25,419 - ERROR - migrations : Problem applying migration. Aborting
+2023-01-23 16:10:25,420 - INFO - migrations : No migrations to execute
+2023-01-23 16:14:54,527 - INFO - migrations : DB migration service
+2023-01-23 16:14:54,527 - INFO - migrations : Loading configuration from file
+2023-01-23 16:14:54,528 - INFO - migrations : DONE
+2023-01-23 16:14:54,553 - INFO - migrations : Connecting to MySQL DB
+2023-01-23 16:14:54,554 - INFO - migrations : Connected to MySQL database. MySQL Server version on 8.0.27
+2023-01-23 16:14:54,615 - INFO - migrations : Executing: 2023-01-23-0000001.sql
+2023-01-23 16:14:54,662 - INFO - migrations : None
+2023-01-23 16:14:54,664 - ERROR - migrations : INSERT INTO `migrations` (`name`, `exec_ts`, `exec_dt`) VALUES ('2023-01-23-0000001.sql', '1674483294', '2023-01-23 14:14:54')
+2023-01-23 16:14:54,664 - ERROR - migrations : Problem inserting migration values into DB: 1146 (42S02): Table 'electricityprice.migrations' doesn't exist
+2023-01-23 16:14:54,665 - INFO - migrations : OK
+2023-01-23 16:14:54,667 - INFO - migrations : Executing: 2023-01-23-0000002.sql
+2023-01-23 16:14:54,716 - INFO - migrations : None
+2023-01-23 16:14:54,719 - ERROR - migrations : INSERT INTO `migrations` (`name`, `exec_ts`, `exec_dt`) VALUES ('2023-01-23-0000002.sql', '1674483294', '2023-01-23 14:14:54')
+2023-01-23 16:14:54,719 - ERROR - migrations : Problem inserting migration values into DB: 1146 (42S02): Table 'electricityprice.migrations' doesn't exist
+2023-01-23 16:14:54,720 - INFO - migrations : OK

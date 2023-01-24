@@ -139,10 +139,10 @@ def mysql_migration_value_insert(name, exec_ts, exec_dt):
 	cursor = get_cursor()
 	try:
 		cursor = connection.cursor()
-		result  = cursor.execute( "INSERT INTO `migrations` (`name`, `exec_ts`, `exec_dt`) VALUES ('" + str(name) + "', '" + str(exec_ts) + "', '" + str(exec_dt) + "')")
+		result  = cursor.execute( "INSERT INTO `migration` (`name`, `exec_ts`, `exec_dt`) VALUES ('" + str(name) + "', '" + str(exec_ts) + "', '" + str(exec_dt) + "')")
 		connection.commit()
 	except Error as e :
-		logger.error( "INSERT INTO `migrations` (`name`, `exec_ts`, `exec_dt`) VALUES ('" + str(name) + "', '" + str(exec_ts) + "', '" + str(exec_dt) + "')")
+		logger.error( "INSERT INTO `migration` (`name`, `exec_ts`, `exec_dt`) VALUES ('" + str(name) + "', '" + str(exec_ts) + "', '" + str(exec_dt) + "')")
 		logger.error('Problem inserting migration values into DB: ' + str(e))
 		pass
 

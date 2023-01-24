@@ -2,6 +2,7 @@ import requests
 import json
 from datetime import datetime
 from main import *
+from worker import *
 print('start')
 now=datetime.now()
 response = requests.get('https://www.nordpoolgroup.com/api/marketdata/page/59?currency=,,,EUR')
@@ -17,34 +18,6 @@ connection = mysql.connector.connect(host=mysql_config_mysql_host, database=mysq
 # Loading logging configuration
 logger = logging.getLogger('root')
 
-def insert_nordpool_prices(starttime,endtime,price):
-    try:
-        cursor = connection.cursor()
-        mySql_insert_query = """INSERT INTO prices (`startime`,`endtime`,price,electricty_id) 
-	                                            VALUES (%s, %s, %s,%s) """       
-        record = (starttime,endtime,price,1)
-        cursor.execute(mySql_insert_query, record)
-        connection.commit()
-        logger.info(" inserted successfully in current")    
-
-    except mysql.connector.Error as error:
-        logger.error("Failed to insert into MySQL table {}".format(error))
-
-
-
-def insert_other_prices(starttime,endtime,price):
-    try:
-        cursor = connection.cursor()
-        mySql_insert_query = """INSERT INTO Electricity (`time`,humid,temp,sensor_id) 
-	                                            VALUES (%s, %s, %s,%s) """       
-        record = ()
-        cursor.execute(mySql_insert_query, record)
-        connection.commit()
-        logger.info(" inserted successfully in current")    
-
-    except mysql.connector.Error as error:
-        logger.error("Failed to insert into MySQL table {}".format(error))        
-        
         
 for row in jayson ['data']['Rows'] :
     if row['IsExtraRow']:
@@ -56,4 +29,5 @@ for row in jayson ['data']['Rows'] :
         eSplit = row[ 'EndTime'].replace('T', ' ')    
         msg=sSplit+ ' ' + '-' + ' ' + eSplit+ ' ' + 'Value: ' + dayData[ 'Value']
         print (msg)
-        insert_nordpool_prices(sSplit,eSplit, dayData[ 'Value'])
+        value=dayData['Value'].replace(",",".")
+        insert_nordpool_prices(sSplit,eSplit,value)
