@@ -53,7 +53,7 @@ for row in jayson ['data']['Rows'] :
         if (dayData[ 'Name'] != dateOfInterest):
             continue
         sSplit = row[ 'StartTime'].replace('T', ' ')  
-        eSplit = row[ 'EndTime'].replace('T', ' ')  
+        eSplit = row[ 'EndTime'].replace('T', ' ')    
         msg=sSplit+ ' ' + '-' + ' ' + eSplit+ ' ' + 'Value: ' + dayData[ 'Value']
         print (msg)
         insert_nordpool_prices(sSplit,eSplit, dayData[ 'Value'])
