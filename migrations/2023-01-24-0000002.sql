@@ -1,0 +1,1 @@
+insert into prices (`startime`,`endtime`,`electricity_id`,`price`) values (now(),now(),2,"0.27");
