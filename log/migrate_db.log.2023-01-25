@@ -1,0 +1,16 @@
+2023-01-25 16:01:57,383 - INFO - migrations : DB migration service
+2023-01-25 16:01:57,384 - INFO - migrations : Loading configuration from file
+2023-01-25 16:01:57,385 - INFO - migrations : DONE
+2023-01-25 16:01:57,411 - INFO - migrations : Connecting to MySQL DB
+2023-01-25 16:01:57,412 - INFO - migrations : Connected to MySQL database. MySQL Server version on 8.0.27
+2023-01-25 16:01:57,422 - ERROR - migrations : CREATE TABLE `migration` ( `id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR(255), `exec_ts` INT(10), `exec_dt` varchar(20), PRIMARY KEY (`id`))
+2023-01-25 16:01:57,423 - ERROR - migrations : Problem creating migration table in DB: 1050 (42S01): Table 'migration' already exists
+2023-01-25 16:01:57,430 - INFO - migrations : Executing: 2023-01-24-0000004.sql
+2023-01-25 16:01:57,432 - ERROR - migrations : create table electricity_used(
+	startime varchar(100)  not null,
+    endtime varchar(100)  not null,
+    used varchar(45) not null
+)
+2023-01-25 16:01:57,432 - ERROR - migrations : Problem executing sql query on DB: 1050 (42S01): Table 'electricity_used' already exists
+2023-01-25 16:01:57,433 - ERROR - migrations : Problem applying migration. Aborting
+2023-01-25 16:01:57,434 - INFO - migrations : No migrations to execute

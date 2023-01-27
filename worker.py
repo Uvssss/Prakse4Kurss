@@ -15,7 +15,7 @@ def insert_nordpool_prices(starttime,endtime,price):
         record = (starttime,endtime,price,1)
         cursor.execute(mySql_insert_query, record)
         connection.commit()
-        logger.info(" inserted successfully in current")    
+        logger.info("inserted successfully")    
 
     except mysql.connector.Error as error:
         logger.error("Failed to insert into MySQL table {}".format(error))
@@ -46,7 +46,7 @@ def select_prices():
 def create_consumtion(startime,endtime):
     try:
         cursor = connection.cursor()
-        consumntion=random.randint(10,100)
+        consumntion=random.randint(10,40)
         mySql_insert_query = """INSERT INTO electricity_used (`startime`,`endtime`,used) 
 	                                            VALUES (%s, %s, %s) """       
         record = (startime,endtime,consumntion)
@@ -79,27 +79,171 @@ def select_consumption():
         # Izvada kļūdas ja ir
         logger.error("Error using select_consumption", e)
 
-def automaticsaving(prices,consumption):
+def get_highest(value):
+    try:
+        #  make a for loop that changes the endtime part of the list to -1 day so its possible to get that days lowest
+        #  same with highest
+        sql_select_Query = "select startime,endtime,max(price),electricty_id from prices where left(startime,10)=left(%s,10);"
+        cursor = connection.cursor()
+        cursor.execute(sql_select_Query,(value,))
+        records = cursor.fetchall()
+        return records
+    except mysql.connector.Error as e:
+        logger.error("Error using select_bateryinfo", e)
+
+def get_lowest(value):
+    try:
+        sql_select_Query = "select startime,endtime,min(price),electricty_id from prices where left(startime,10)=left(%s,10);"
+        cursor = connection.cursor()
+        cursor.execute(sql_select_Query,(value,))
+        records = cursor.fetchall()
+        return records
+    except mysql.connector.Error as e:
+        logger.error("Error using select_bateryinfo", e)
+def get_consumption(startime):
+    try:
+        sql_select_Query = "select used from electricity_used where startime = %s;"
+        cursor = connection.cursor()
+        record=[startime,]
+        cursor.execute(sql_select_Query,record)
+        records = cursor.fetchall()
+        return records
+    except mysql.connector.Error as e:
+        logger.error("Error using select_bateryinfo", e)
+        
+def insert_batteryinfo(startime,endtime,amount,charged,electricity_id):
+    try:
+        cursor = connection.cursor()
+        mySql_insert_query = """ insert into battery_info (startime,endtime,charge_amount,charge_power,electricty_id) values (%s,%s,%s,%s,%s) """       
+        record = (startime,endtime,amount,charged,electricity_id)
+        cursor.execute(mySql_insert_query, record)
+        connection.commit()
+        logger.info(" inserted successfully")    
+
+    except mysql.connector.Error as error:
+        logger.error("Failed to insert into MySQL table {}".format(error))  
+
+def automaticsaving(prices,consumption,battery,min_list,max_list):
     fixed_cost = config.get('fixed_price', 'fixed_LV_price')
+    battery_capacity= config.get('battery', 'capacity')
+    battery_chargepower= config.get('battery', 'chargepower')
     fixed_list=[]
     nordpool_list=[]
-    for i in consumption:
-        cost=int(i[2])
-        fixed_price=cost*float(fixed_cost)
-        temp_list=[i[0],i[1],fixed_price,2]
-        fixed_list.append(temp_list)
-    for x in range(0,len(prices)):
-        cost=int(consumption[x][2])
-        nordpool_price=cost*float(prices[x][2])
-        temp_list1=[prices[x][0],prices[x][1],nordpool_price,prices[x][3]]
-        nordpool_list.append(temp_list1)
-    print(nordpool_list)
-    print(fixed_list)
+    saved_list=[]
+   
+    if bool(battery) == False:        
+        for i in consumption: # Loop makes fixed prices list with consumption
+            cost=int(i[2])
+            fixed_price=cost*float(fixed_cost)
+            temp_list=[i[0],i[1],fixed_price,2]
+            fixed_list.append(temp_list)
+            
+        for x in range(0,len(prices)):
+            cost=float(consumption[x][2])
+            nordpool_price=cost*float(prices[x][2])
+            temp_list1=[prices[x][0],prices[x][1],nordpool_price,prices[x][3]]
+            nordpool_list.append(temp_list1)
+        for index in range(0,len(nordpool_list)):
+            if prices[index][2]==max_list[0][2]: 
+                consump=get_consumption(prices[index][0])
+                if float(consump[0][0])<float(battery_capacity) or float(consump[0][0])==float(battery_capacity):
+                    difference=nordpool_list[index][2]
+                    capacity=float(battery_capacity)-float(consump[0][0])
+                    temp_list2=[nordpool_list[index][0],nordpool_list[index][1],difference,3] 
+                    saved_list.append(temp_list2)
+                    insert_batteryinfo(nordpool_list[index][0],nordpool_list[index][1],capacity,0,3) 
+                    continue
+                if float(consump[0][0])>float(battery_capacity):
+                    difference=fixed_list[index][2]-nordpool_list[index][2]
+                    temp_list2=[nordpool_list[index][0],nordpool_list[index][1],difference,nordpool_list[index][3]]
+                    saved_list.append(temp_list2)
+                    continue
+            
+            if nordpool_list[index][0] == fixed_list[index][0]:
+                                
+                if nordpool_list[index][2]<fixed_list[index][2]:                
+                    difference=fixed_list[index][2]-nordpool_list[index][2]
+                    temp_list2=[nordpool_list[index][0],nordpool_list[index][1],difference,nordpool_list[index][3]]
+                    saved_list.append(temp_list2)
+                    
+                if nordpool_list[index][2]>fixed_list[index][2]:
+                    difference=nordpool_list[index][2]-fixed_list[index][2]
+                    temp_list2=[nordpool_list[index][0],nordpool_list[index][1],difference,fixed_list[index][3]]
+                    saved_list.append(temp_list2)
+                    
+        return saved_list
         
-        
-    
+    else:
+        for i in consumption: # Loop makes fixed prices list with consumption
+            cost=int(i[2])
+            fixed_price=cost*float(fixed_cost)
+            temp_list=[i[0],i[1],fixed_price,2]
+            fixed_list.append(temp_list)
+            
+        for x in range(0,len(prices)):
+            cost=float(consumption[x][2])
+            nordpool_price=cost*float(prices[x][2])
+            temp_list1=[prices[x][0],prices[x][1],nordpool_price,prices[x][3]]
+            nordpool_list.append(temp_list1)
+             
+        for index in range(0,len(nordpool_list)):
+            if nordpool_list[index][0] == fixed_list[index][0]:    
+                if prices[index][2]==max_list[0][2]:
+                    consump=get_consumption(max_list[0][0])
+                    if float(consump[0][0])<float(battery_capacity) or float(consump[0][0])==float(battery_capacity):
+                        difference=nordpool_list[index][2]
+                        capacity=float(battery_capacity)-float(consump[0][0])
+                        temp_list2=[nordpool_list[index][0],nordpool_list[index][1],difference,3]
+                        saved_list.append(temp_list2)
+                        insert_batteryinfo(nordpool_list[index][0],nordpool_list[index][1],0,capacity,3)
+                        continue
+                    
+                    if float(consump[0][0])>float(battery_capacity):
+                        difference=fixed_list[index][2]-nordpool_list[index][2]
+                        temp_list2=[nordpool_list[index][0],nordpool_list[index][1],difference,nordpool_list[index][3]]
+                        saved_list.append(temp_list2)
+                        continue
+                    
+                if prices[index][2]==min_list[0][2]:
+                    if float(battery[0][2])<float(battery_capacity):
+                        new_cap=float(battery_chargepower)+float(battery[0][2])
+                        if new_cap>40:
+                            new_cap=40
+                        insert_batteryinfo(nordpool_list[index][0],nordpool_list[index][1],new_cap,battery_chargepower,3) # dies 
+                        
+                if nordpool_list[index][2]<fixed_list[index][2]:
+                    difference=fixed_list[index][2]-nordpool_list[index][2]
+                    temp_list2=[nordpool_list[index][0],nordpool_list[index][1],difference,nordpool_list[index][3]]
+                    saved_list.append(temp_list2)
+                    
+                if nordpool_list[index][2]>fixed_list[index][2]:
+                    difference=nordpool_list[index][2]-fixed_list[index][2]
+                    temp_list2=[nordpool_list[index][0],nordpool_list[index][1],difference,fixed_list[index][3]]
+                    saved_list.append(temp_list2)
+                    
+        return saved_list
 
-#  Create math function from previous values
-#  Convert nordpool EUR/MWH to eur/kwh get from config constant price and amount for the hour
-#  in this function check what is cheaper  and how much cheaper it is. get the difference from both amounts, add that to saved column in electricity_connection
-#  create function that inserts amount used with random int, put run then function in experement.py at the where they do the insert
+def insert_saved_list(saved_list):
+    try:
+        cursor = connection.cursor()
+        mySql_insert_query = """INSERT INTO electricity_connection (`startime`,`endtime`,`savedEUR`,electricty_id) 
+	                                            VALUES (%s, %s, %s,%s) """
+        for record in saved_list:
+            cursor.execute(mySql_insert_query, record)
+            connection.commit()
+            logger.info(" inserted successfully")    
+    except mysql.connector.Error as error:
+        logger.error("Failed to insert into MySQL table {}".format(error))     
+    
+def select_bateryinfo(id):
+    try:
+        sql_select_Query = "select * from battery_info where electricty_id = %s order by startime DESC limit 1;"
+        cursor = connection.cursor()
+        record=(3,)
+        cursor.execute(sql_select_Query,record)
+        records = cursor.fetchall()
+        return records
+    except mysql.connector.Error as e:
+        logger.error("Error using select_bateryinfo", e)
+
+

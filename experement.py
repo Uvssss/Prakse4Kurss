@@ -32,10 +32,23 @@ for row in jayson ['data']['Rows'] :
         endtime=datetime.strptime(eSplit,"%Y-%m-%d %H:%M:%S")
         msg=sSplit+ ' ' + '-' + ' ' + eSplit+ ' ' + 'Value: ' + dayData[ 'Value']
         # print (msg)
-        sSplit=startime - timedelta(days=1)
-        eSplit=endtime - timedelta(days=1)
+        # sSplit=startime - timedelta(days=1)
+        # eSplit=endtime - timedelta(days=1)
+        sSplit=startime
+        eSplit=endtime
         value=dayData['Value'].replace(",",".")
         value=float(value)
         converted_val=value/1000
         insert_nordpool_prices(sSplit,eSplit,converted_val)
         create_consumtion(sSplit,eSplit)
+
+
+prices=select_prices()
+consumption=select_consumption()
+
+lowest=get_lowest(startime)
+highest=get_highest(startime)
+
+battery=select_bateryinfo(3)
+saved_list=automaticsaving(prices,consumption,battery,lowest,highest)
+insert_saved_list(saved_list)

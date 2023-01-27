@@ -133,23 +133,6 @@ def mysql_exec_any_sql(sql_query):
 		status = 1
 		pass
 	return status
-def check_data():
-    try:
-        cursor = connection.cursor()
-        mySql_insert_query = """ 
-        	create trigger datecheck before insert on prices for each row
-				begin
-					set @times=(select left(`startime`,10) from prices order by `startime` DESC limit 1);
-					if left(new.`startime`,10)=@times then
-						signal sqlstate '45000' set message_text = "Data already exists in database";
-    				end if;
-				end"""       
-        cursor.execute(mySql_insert_query)
-        connection.commit()
-        logger.info("Trigger created")
-
-    except mysql.connector.Error as error:
-        logger.error("Failed to create trigger {}".format(error))
 
 # Migration value insert
 def mysql_migration_value_insert(name, exec_ts, exec_dt):
