@@ -1,1 +1,8 @@
 Izveidot atskaites ievadot datumu, jauna python failā
+
+create new table kur tu izlieto elektribu
+savieno to ar used
+
+elektribas izlietosanas vietas ar used tiek savienots ar n:n
+
+satasi select un insert izlietojumu
