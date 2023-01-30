@@ -1,4 +1,5 @@
-INSERT INTO electricity_used_item
-(`name`)
-VALUES
-("stove");
+create table total_consumption(
+    startime varchar(100) not null,
+    endtime varchar(100) not null,
+    consumption float not null
+);

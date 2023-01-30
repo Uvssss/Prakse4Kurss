@@ -1,6 +1,6 @@
-create table electricity_item_used(
-    startime varchar(45) not null,
-    electricity_used_item_id int not null,
-    amount float not null,
-	foreign key(electricity_used_item_id) references electricity_used_item(id)
+create table prices(
+    startime varchar(100) not null,
+    endtime varchar(100) not null,
+    nord_price float not null,
+    static_price float not null
 );

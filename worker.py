@@ -9,10 +9,11 @@ connection = mysql.connector.connect(host=mysql_config_mysql_host, database=mysq
 logger = logging.getLogger('root')
 def insert_nordpool_prices(starttime,endtime,price):
     try:
+        fixed_cost = float(config.get('fixed_price', 'fixed_LV_price'))
         cursor = connection.cursor()
-        mySql_insert_query = """INSERT INTO prices (`startime`,`endtime`,price,electricty_id) 
-	                                            VALUES (%s, %s, %s,%s) """       
-        record = (starttime,endtime,price,1)
+        mySql_insert_query = """INSERT INTO prices (`startime`,`endtime`,`nordprice`,`static_price`) 
+	                                            VALUES (%s,%s,%s,%s) """       
+        record = (starttime,endtime,price,fixed_cost,)
         cursor.execute(mySql_insert_query, record)
         connection.commit()
         logger.info("inserted successfully")    
@@ -174,6 +175,7 @@ def automaticsaving(prices,consumption,battery,min_list,max_list):
             nordpool_price=cost*float(prices[x][2])
             temp_list1=[prices[x][0],prices[x][1],nordpool_price,prices[x][3]]
             nordpool_list.append(temp_list1)
+            
         for index in range(0,len(nordpool_list)):
             if prices[index][2]==max_list[0][2]: 
                 consump=get_consumption(prices[index][0])
@@ -218,6 +220,7 @@ def automaticsaving(prices,consumption,battery,min_list,max_list):
             nordpool_list.append(temp_list1)
              
         for index in range(0,len(nordpool_list)):
+            
             if nordpool_list[index][0] == fixed_list[index][0]:    
                 if prices[index][2]==max_list[0][2]:
                     consump=get_consumption(max_list[0][0])
@@ -278,7 +281,7 @@ def select_bateryinfo(id):
         logger.error("Error using select_bateryinfo", e)
 
 
-def print():
+def report():
     try:
         sql_select_Query = """select eu.startime as starttime,el_item.name,el_item_use.amount,eu.used as hour_sum
         from electricity_used_item as el_item 
@@ -287,6 +290,10 @@ def print():
         cursor = connection.cursor()
         cursor.execute(sql_select_Query)
         records = cursor.fetchall()
-        return records
+        for row in records:
+            print("Start Time = ", row[0])
+            print("Name = ", row[1])
+            print("Amount = ", row[2])
+            print("Hour = ", row[3],"\n")
     except mysql.connector.Error as e:
         logger.error("Error using select_bateryinfo", e)
