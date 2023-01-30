@@ -164,7 +164,7 @@ def automaticsaving(prices,consumption,battery,min_list,max_list):
    
     if bool(battery) == False:        
         for i in consumption: # Loop makes fixed prices list with consumption
-            cost=int(i[2])
+            cost=float(i[2])
             fixed_price=cost*float(fixed_cost)
             temp_list=[i[0],i[1],fixed_price,2]
             fixed_list.append(temp_list)
@@ -238,7 +238,7 @@ def automaticsaving(prices,consumption,battery,min_list,max_list):
                 if prices[index][2]==min_list[0][2]:
                     if float(battery[0][2])<float(battery_capacity):
                         new_cap=float(battery_chargepower)+float(battery[0][2])
-                        if new_cap>40:
+                        if new_cap>float(battery_capacity):
                             new_cap=40
                         insert_batteryinfo(nordpool_list[index][0],nordpool_list[index][1],new_cap,battery_chargepower,3) # dies 
                         
@@ -278,3 +278,15 @@ def select_bateryinfo(id):
         logger.error("Error using select_bateryinfo", e)
 
 
+def print():
+    try:
+        sql_select_Query = """select eu.startime as starttime,el_item.name,el_item_use.amount,eu.used as hour_sum
+        from electricity_used_item as el_item 
+        inner join electricity_item_used as el_item_use on el_item_use.electricity_used_item_id=el_item.id 
+        inner join electricity_used as eu on eu.startime=el_item_use.startime;"""
+        cursor = connection.cursor()
+        cursor.execute(sql_select_Query)
+        records = cursor.fetchall()
+        return records
+    except mysql.connector.Error as e:
+        logger.error("Error using select_bateryinfo", e)
