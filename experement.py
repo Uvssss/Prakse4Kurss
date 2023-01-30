@@ -48,7 +48,7 @@ consumption=select_consumption()
 
 lowest=get_lowest(startime)
 highest=get_highest(startime)
-
+ 
 battery=select_bateryinfo(3)
 saved_list=automaticsaving(prices,consumption,battery,lowest,highest)
 insert_saved_list(saved_list)
