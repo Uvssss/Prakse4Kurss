@@ -480,3 +480,174 @@
 2023-01-30 12:08:03,497 - INFO - migrations : Executing: 2023-01-30-0000004.sql
 2023-01-30 12:08:03,499 - INFO - migrations : None
 2023-01-30 12:08:03,523 - INFO - migrations : OK
+2023-01-30 14:57:57,771 - INFO - migrations : DB migration service
+2023-01-30 14:57:57,771 - INFO - migrations : Loading configuration from file
+2023-01-30 14:57:57,785 - INFO - migrations : DONE
+2023-01-30 14:58:19,270 - INFO - migrations : DB migration service
+2023-01-30 14:58:19,271 - INFO - migrations : Loading configuration from file
+2023-01-30 14:58:19,272 - INFO - migrations : DONE
+2023-01-30 14:58:19,325 - INFO - migrations : Connecting to MySQL DB
+2023-01-30 14:58:19,326 - INFO - migrations : Connected to MySQL database. MySQL Server version on 8.0.32
+2023-01-30 14:58:19,582 - INFO - migrations : Executing: 2023-01-23-0000001.sql
+2023-01-30 14:58:19,833 - INFO - migrations : None
+2023-01-30 14:58:19,885 - INFO - migrations : OK
+2023-01-30 14:58:19,894 - INFO - migrations : Executing: 2023-01-23-0000002.sql
+2023-01-30 14:58:20,403 - INFO - migrations : None
+2023-01-30 14:58:20,437 - INFO - migrations : OK
+2023-01-30 14:58:20,451 - INFO - migrations : Executing: 2023-01-24-0000000.sql
+2023-01-30 14:58:20,456 - INFO - migrations : None
+2023-01-30 14:58:20,519 - INFO - migrations : OK
+2023-01-30 14:58:20,528 - INFO - migrations : Executing: 2023-01-24-0000001.sql
+2023-01-30 14:58:20,530 - INFO - migrations : None
+2023-01-30 14:58:20,635 - INFO - migrations : OK
+2023-01-30 14:58:20,640 - INFO - migrations : Executing: 2023-01-24-0000003.sql
+2023-01-30 14:58:20,821 - INFO - migrations : None
+2023-01-30 14:58:20,858 - INFO - migrations : OK
+2023-01-30 14:58:20,869 - INFO - migrations : Executing: 2023-01-24-0000004.sql
+2023-01-30 14:58:20,977 - INFO - migrations : None
+2023-01-30 14:58:21,013 - INFO - migrations : OK
+2023-01-30 14:58:21,023 - INFO - migrations : Executing: 2023-01-25-0000000.sql
+2023-01-30 14:58:21,027 - INFO - migrations : None
+2023-01-30 14:58:21,095 - INFO - migrations : OK
+2023-01-30 14:58:21,104 - INFO - migrations : Executing: 2023-01-25-0000001.sql
+2023-01-30 14:58:21,298 - INFO - migrations : None
+2023-01-30 14:58:21,340 - INFO - migrations : OK
+2023-01-30 14:58:21,353 - INFO - migrations : Executing: 2023-01-30-0000000.sql
+2023-01-30 14:58:21,626 - INFO - migrations : None
+2023-01-30 14:58:21,661 - INFO - migrations : OK
+2023-01-30 14:58:21,679 - INFO - migrations : Executing: 2023-01-30-0000001.sql
+2023-01-30 14:58:21,885 - INFO - migrations : None
+2023-01-30 14:58:21,929 - INFO - migrations : OK
+2023-01-30 14:58:21,958 - INFO - migrations : Executing: 2023-01-30-0000002.sql
+2023-01-30 14:58:21,966 - INFO - migrations : None
+2023-01-30 14:58:22,034 - INFO - migrations : OK
+2023-01-30 14:58:22,065 - INFO - migrations : Executing: 2023-01-30-0000003.sql
+2023-01-30 14:58:22,069 - INFO - migrations : None
+2023-01-30 14:58:22,139 - INFO - migrations : OK
+2023-01-30 14:58:22,171 - INFO - migrations : Executing: 2023-01-30-0000004.sql
+2023-01-30 14:58:22,175 - INFO - migrations : None
+2023-01-30 14:58:22,254 - INFO - migrations : OK
+2023-01-30 15:32:10,687 - INFO - migrations : DB migration service
+2023-01-30 15:32:10,687 - INFO - migrations : Loading configuration from file
+2023-01-30 15:32:10,698 - INFO - migrations : DONE
+2023-01-30 15:32:42,607 - INFO - migrations : DB migration service
+2023-01-30 15:32:42,607 - INFO - migrations : Loading configuration from file
+2023-01-30 15:32:42,616 - INFO - migrations : DONE
+2023-01-30 15:32:42,668 - INFO - migrations : Connecting to MySQL DB
+2023-01-30 15:32:42,669 - INFO - migrations : Connected to MySQL database. MySQL Server version on 8.0.32
+2023-01-30 15:32:42,955 - INFO - migrations : Executing: 2023-01-23-0000001.sql
+2023-01-30 15:32:43,077 - INFO - migrations : None
+2023-01-30 15:32:43,124 - INFO - migrations : OK
+2023-01-30 15:32:43,132 - INFO - migrations : Executing: 2023-01-24-0000000.sql
+2023-01-30 15:32:43,140 - INFO - migrations : None
+2023-01-30 15:32:43,206 - INFO - migrations : OK
+2023-01-30 15:32:43,211 - INFO - migrations : Executing: 2023-01-24-0000001.sql
+2023-01-30 15:32:43,214 - INFO - migrations : None
+2023-01-30 15:32:43,278 - INFO - migrations : OK
+2023-01-30 15:32:43,285 - INFO - migrations : Executing: 2023-01-24-0000003.sql
+2023-01-30 15:32:43,287 - ERROR - migrations : create table electricity_connection(
+	`startime` varchar(100)  not null,
+    `endtime` varchar(100)  not null,
+    `nord_price` float not null
+    `static_price` float not null
+    `battery_id` int not null,
+    foreign key(`battery_id`) references `battery_info`(`id`)
+
+    `savedEUR` float not null,
+    `connection_id` int not null
+	foreign key(`connection_id`) references `Electricity`(`id`)
+);
+2023-01-30 15:32:43,290 - ERROR - migrations : Problem executing sql query on DB: 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '`static_price` float not null
+    `battery_id` int not null,
+    foreign key(`ba' at line 5
+2023-01-30 15:32:43,291 - ERROR - migrations : Problem applying migration. Aborting
+2023-01-30 15:33:52,155 - INFO - migrations : DB migration service
+2023-01-30 15:33:52,159 - INFO - migrations : Loading configuration from file
+2023-01-30 15:33:52,164 - INFO - migrations : DONE
+2023-01-30 15:33:52,262 - INFO - migrations : Connecting to MySQL DB
+2023-01-30 15:33:52,263 - INFO - migrations : Connected to MySQL database. MySQL Server version on 8.0.32
+2023-01-30 15:33:52,447 - INFO - migrations : Executing: 2023-01-23-0000001.sql
+2023-01-30 15:33:52,569 - INFO - migrations : None
+2023-01-30 15:33:52,604 - INFO - migrations : OK
+2023-01-30 15:33:52,608 - INFO - migrations : Executing: 2023-01-24-0000000.sql
+2023-01-30 15:33:52,612 - INFO - migrations : None
+2023-01-30 15:33:52,664 - INFO - migrations : OK
+2023-01-30 15:33:52,670 - INFO - migrations : Executing: 2023-01-24-0000001.sql
+2023-01-30 15:33:52,672 - INFO - migrations : None
+2023-01-30 15:33:52,736 - INFO - migrations : OK
+2023-01-30 15:33:52,756 - INFO - migrations : Executing: 2023-01-24-0000003.sql
+2023-01-30 15:33:52,760 - ERROR - migrations : create table electricity_connection(
+	`startime` varchar(100)  not null,
+    `endtime` varchar(100)  not null,
+    `nord_price` float not null
+    `static_price` float not null
+    `savedEUR` float not null,
+    `connection_id` int not null
+	foreign key(`connection_id`) references `Electricity`(`id`)
+);
+2023-01-30 15:33:52,764 - ERROR - migrations : Problem executing sql query on DB: 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '`static_price` float not null
+    `savedEUR` float not null,
+    `connection_id`' at line 5
+2023-01-30 15:33:52,767 - ERROR - migrations : Problem applying migration. Aborting
+2023-01-30 15:36:33,832 - INFO - migrations : DB migration service
+2023-01-30 15:36:33,832 - INFO - migrations : Loading configuration from file
+2023-01-30 15:36:33,846 - INFO - migrations : DONE
+2023-01-30 15:36:33,897 - INFO - migrations : Connecting to MySQL DB
+2023-01-30 15:36:33,899 - INFO - migrations : Connected to MySQL database. MySQL Server version on 8.0.32
+2023-01-30 15:36:34,139 - INFO - migrations : Executing: 2023-01-23-0000001.sql
+2023-01-30 15:36:34,280 - INFO - migrations : None
+2023-01-30 15:36:34,305 - INFO - migrations : OK
+2023-01-30 15:36:34,327 - INFO - migrations : Executing: 2023-01-24-0000000.sql
+2023-01-30 15:36:34,332 - INFO - migrations : None
+2023-01-30 15:36:34,421 - INFO - migrations : OK
+2023-01-30 15:36:34,426 - INFO - migrations : Executing: 2023-01-24-0000001.sql
+2023-01-30 15:36:34,428 - INFO - migrations : None
+2023-01-30 15:36:34,518 - INFO - migrations : OK
+2023-01-30 15:36:34,534 - INFO - migrations : Executing: 2023-01-24-0000003.sql
+2023-01-30 15:36:34,541 - ERROR - migrations : create table electricity_connection(
+	`startime` varchar(100)  not null,
+    `endtime` varchar(100)  not null,
+    `nord_price` float not null
+    `static_price` float not null
+);
+2023-01-30 15:36:34,544 - ERROR - migrations : Problem executing sql query on DB: 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '`static_price` float not null
+)' at line 5
+2023-01-30 15:36:34,546 - ERROR - migrations : Problem applying migration. Aborting
+2023-01-30 15:38:43,221 - INFO - migrations : DB migration service
+2023-01-30 15:38:43,221 - INFO - migrations : Loading configuration from file
+2023-01-30 15:38:43,222 - INFO - migrations : DONE
+2023-01-30 15:38:43,273 - INFO - migrations : Connecting to MySQL DB
+2023-01-30 15:38:43,274 - INFO - migrations : Connected to MySQL database. MySQL Server version on 8.0.32
+2023-01-30 15:38:43,533 - INFO - migrations : Executing: 2023-01-23-0000001.sql
+2023-01-30 15:38:43,639 - INFO - migrations : None
+2023-01-30 15:38:43,675 - INFO - migrations : OK
+2023-01-30 15:38:43,679 - INFO - migrations : Executing: 2023-01-24-0000000.sql
+2023-01-30 15:38:43,684 - INFO - migrations : None
+2023-01-30 15:38:43,735 - INFO - migrations : OK
+2023-01-30 15:38:43,740 - INFO - migrations : Executing: 2023-01-24-0000001.sql
+2023-01-30 15:38:43,743 - INFO - migrations : None
+2023-01-30 15:38:43,807 - INFO - migrations : OK
+2023-01-30 15:38:43,811 - INFO - migrations : Executing: 2023-01-24-0000003.sql
+2023-01-30 15:38:43,903 - INFO - migrations : None
+2023-01-30 15:38:43,939 - INFO - migrations : OK
+2023-01-30 15:38:43,943 - INFO - migrations : Executing: 2023-01-24-0000004.sql
+2023-01-30 15:38:44,133 - INFO - migrations : None
+2023-01-30 15:38:44,191 - INFO - migrations : OK
+2023-01-30 15:38:44,195 - INFO - migrations : Executing: 2023-01-25-0000000.sql
+2023-01-30 15:38:44,197 - INFO - migrations : None
+2023-01-30 15:38:44,290 - INFO - migrations : OK
+2023-01-30 15:38:44,306 - INFO - migrations : Executing: 2023-01-25-0000001.sql
+2023-01-30 15:38:44,311 - ERROR - migrations : create table battery_info(
+    id int not null auto_increment,
+	startime varchar(100)  not null,
+    endtime varchar(100)  not null,
+    charge_amount float not null,
+    charge_power float not null,
+    max_capacity float not null,
+    current_max_capacity float not null,
+    charge_power float not null,
+    electricty_id int not null,
+	foreign key(electricty_id) references Electricity(id)
+);
+2023-01-30 15:38:44,316 - ERROR - migrations : Problem executing sql query on DB: 1060 (42S21): Duplicate column name 'charge_power'
+2023-01-30 15:38:44,317 - ERROR - migrations : Problem applying migration. Aborting
