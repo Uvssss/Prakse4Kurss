@@ -5,4 +5,4 @@ create table battery_info(
     charge_power float not null,
     electricty_id int not null,
 	foreign key(electricty_id) references Electricity(id)
-)
+);

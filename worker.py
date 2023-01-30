@@ -43,10 +43,38 @@ def select_prices():
         # Izvada kļūdas ja ir
         logger.error("Error using select_prices", e)
 
-def create_consumtion(startime,endtime):
+def consumption_item(startime):
     try:
         cursor = connection.cursor()
-        consumntion=random.randint(10,40)
+        mySql_insert_query = """INSERT INTO electricity_item_used (`startime`,`electricity_used_item_id`,amount) 
+	                                            VALUES (%s, %s, %s) """       
+        for i in range(0,2):
+            consumntion=random.randint(1,10)
+            electricity_item_id=random.randint(1,3)
+            record=[startime,electricity_item_id,consumntion]
+            cursor.execute(mySql_insert_query, record)
+            connection.commit()
+            logger.info(" inserted successfully")
+
+    except mysql.connector.Error as error:
+        logger.error("Failed to insert into MySQL table {}".format(error))     
+def item_consumption(startime):
+    try:
+        sum=0
+        sql_select_Query = "select amount from `electricity_item_used` where startime=%s;"
+        cursor = connection.cursor()
+        cursor.execute(sql_select_Query,(startime,))
+        records = cursor.fetchall()
+        for i in range(0,len(records)):
+            for x in range(0,len(records[i])):
+                sum=sum+records[i][x]
+        return sum
+    except mysql.connector.Error as e:
+        logger.error("Error using select_bateryinfo", e)
+
+def create_consumtion(startime,endtime,consumntion):
+    try:
+        cursor = connection.cursor()
         mySql_insert_query = """INSERT INTO electricity_used (`startime`,`endtime`,used) 
 	                                            VALUES (%s, %s, %s) """       
         record = (startime,endtime,consumntion)
@@ -100,6 +128,8 @@ def get_lowest(value):
         return records
     except mysql.connector.Error as e:
         logger.error("Error using select_bateryinfo", e)
+
+
 def get_consumption(startime):
     try:
         sql_select_Query = "select used from electricity_used where startime = %s;"
@@ -109,7 +139,8 @@ def get_consumption(startime):
         records = cursor.fetchall()
         return records
     except mysql.connector.Error as e:
-        logger.error("Error using select_bateryinfo", e)
+        logger.error("Error using electricity_used", e)
+
         
 def insert_batteryinfo(startime,endtime,amount,charged,electricity_id):
     try:
