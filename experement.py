@@ -32,12 +32,6 @@ def insert():
             eSplit = row[ 'EndTime'].replace('T', ' ')    
             startime=datetime.strptime(sSplit,"%Y-%m-%d %H:%M:%S")
             endtime=datetime.strptime(eSplit,"%Y-%m-%d %H:%M:%S")
-            msg=sSplit+ ' ' + '-' + ' ' + eSplit+ ' ' + 'Value: ' + dayData[ 'Value']
-            # print (msg)
-            # sSplit=startime - timedelta(days=1)
-            # eSplit=endtime - timedelta(days=1)
-            # sSplit=startime
-            # eSplit=endtime
             value=dayData['Value'].replace(",",".")
             value=float(value)
             converted_val=value/1000
@@ -57,7 +51,7 @@ def insert():
     saved_list=automaticsaving(prices,consumption,battery,lowest,highest)
     insert_saved_list(saved_list)
 
-
+schedule.every().day.at("00:00").do(insert)
 while True:
 
     schedule.run_pending()
