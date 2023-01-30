@@ -6,3 +6,15 @@ savieno to ar used
 elektribas izlietosanas vietas ar used tiek savienots ar n:n
 
 satasi select un insert izlietojumu
+
+
+
+softa jasaglaba stavoklis uz kuru pieslegumu tiek lietots
+
+
+
+
+add to battery info cik eur 
+
+
+ 
