@@ -651,3 +651,84 @@
 );
 2023-01-30 15:38:44,316 - ERROR - migrations : Problem executing sql query on DB: 1060 (42S21): Duplicate column name 'charge_power'
 2023-01-30 15:38:44,317 - ERROR - migrations : Problem applying migration. Aborting
+2023-01-30 16:33:00,236 - INFO - migrations : DB migration service
+2023-01-30 16:33:00,236 - INFO - migrations : Loading configuration from file
+2023-01-30 16:33:00,238 - INFO - migrations : DONE
+2023-01-30 16:33:08,134 - INFO - migrations : DB migration service
+2023-01-30 16:33:08,134 - INFO - migrations : Loading configuration from file
+2023-01-30 16:33:08,139 - INFO - migrations : DONE
+2023-01-30 16:33:08,189 - INFO - migrations : Connecting to MySQL DB
+2023-01-30 16:33:08,191 - INFO - migrations : Connected to MySQL database. MySQL Server version on 8.0.32
+2023-01-30 16:33:08,494 - INFO - migrations : Executing: 2023-01-30-0000000.sql
+2023-01-30 16:33:08,604 - INFO - migrations : None
+2023-01-30 16:33:08,636 - INFO - migrations : OK
+2023-01-30 16:33:08,669 - INFO - migrations : Executing: 2023-01-30-0000001.sql
+2023-01-30 16:33:08,846 - INFO - migrations : None
+2023-01-30 16:33:08,882 - INFO - migrations : OK
+2023-01-30 16:33:08,888 - INFO - migrations : Executing: 2023-01-30-0000003.sql
+2023-01-30 16:33:08,890 - ERROR - migrations : create table consumption(
+	`id` int not null unique auto_increment,
+    `startime` varchar(45) not nullid
+    `endtime` varchar(45) not null
+    `items_id` int not null,
+    foreign key(items_id) references items(id)
+    
+);
+2023-01-30 16:33:08,892 - ERROR - migrations : Problem executing sql query on DB: 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'nullid
+    `endtime` varchar(45) not null
+    `items_id` int not null,
+    forei' at line 3
+2023-01-30 16:33:08,893 - ERROR - migrations : Problem applying migration. Aborting
+2023-01-30 16:35:21,243 - INFO - migrations : DB migration service
+2023-01-30 16:35:21,243 - INFO - migrations : Loading configuration from file
+2023-01-30 16:35:21,245 - INFO - migrations : DONE
+2023-01-30 16:35:21,298 - INFO - migrations : Connecting to MySQL DB
+2023-01-30 16:35:21,300 - INFO - migrations : Connected to MySQL database. MySQL Server version on 8.0.32
+2023-01-30 16:35:21,463 - INFO - migrations : Executing: 2023-01-30-0000000.sql
+2023-01-30 16:35:21,608 - INFO - migrations : None
+2023-01-30 16:35:21,642 - INFO - migrations : OK
+2023-01-30 16:35:21,655 - INFO - migrations : Executing: 2023-01-30-0000001.sql
+2023-01-30 16:35:21,773 - INFO - migrations : None
+2023-01-30 16:35:21,808 - INFO - migrations : OK
+2023-01-30 16:35:21,813 - INFO - migrations : Executing: 2023-01-30-0000003.sql
+2023-01-30 16:35:21,816 - ERROR - migrations : create table consumption(
+	`id` int not null unique auto_increment,
+    `startime` varchar(45) not null
+    `endtime` varchar(45) not null
+    `items_id` int not null,
+    foreign key(items_id) references items(id)
+    
+);
+2023-01-30 16:35:21,818 - ERROR - migrations : Problem executing sql query on DB: 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '`endtime` varchar(45) not null
+    `items_id` int not null,
+    foreign key(item' at line 4
+2023-01-30 16:35:21,819 - ERROR - migrations : Problem applying migration. Aborting
+2023-01-30 16:38:05,668 - INFO - migrations : DB migration service
+2023-01-30 16:38:05,669 - INFO - migrations : Loading configuration from file
+2023-01-30 16:38:05,672 - INFO - migrations : DONE
+2023-01-30 16:38:05,758 - INFO - migrations : Connecting to MySQL DB
+2023-01-30 16:38:05,759 - INFO - migrations : Connected to MySQL database. MySQL Server version on 8.0.32
+2023-01-30 16:38:05,994 - INFO - migrations : Executing: 2023-01-30-0000000.sql
+2023-01-30 16:38:06,173 - INFO - migrations : None
+2023-01-30 16:38:06,217 - INFO - migrations : OK
+2023-01-30 16:38:06,233 - INFO - migrations : Executing: 2023-01-30-0000001.sql
+2023-01-30 16:38:06,821 - INFO - migrations : None
+2023-01-30 16:38:06,875 - INFO - migrations : OK
+2023-01-30 16:38:06,882 - INFO - migrations : Executing: 2023-01-30-0000003.sql
+2023-01-30 16:38:07,192 - INFO - migrations : None
+2023-01-30 16:38:07,228 - INFO - migrations : OK
+2023-01-30 16:38:07,234 - INFO - migrations : Executing: 2023-01-30-0000004.sql
+2023-01-30 16:38:07,418 - INFO - migrations : None
+2023-01-30 16:38:07,536 - INFO - migrations : OK
+2023-01-30 16:38:07,565 - INFO - migrations : Executing: 2023-01-30-0000005.sql
+2023-01-30 16:38:07,576 - ERROR - migrations : create table battery_info(
+    `id` int not null auto_increment,
+	`startime` varchar(100)  not null,
+    `endtime` varchar(100)  not null,
+    `max_capacity` float not null,
+    `current_capacity` float not null,
+    `charge_power` float not null,
+    `name` varchar(45) not null
+);
+2023-01-30 16:38:07,584 - ERROR - migrations : Problem executing sql query on DB: 1075 (42000): Incorrect table definition; there can be only one auto column and it must be defined as a key
+2023-01-30 16:38:07,587 - ERROR - migrations : Problem applying migration. Aborting
