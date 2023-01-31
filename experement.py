@@ -37,12 +37,12 @@ def insert():
             value=float(value)
             converted_val=value/1000
             insert_nordpool_prices(sSplit,eSplit,converted_val)
-            consumption_item(startime)
-            consumption=item_consumption(startime)
+            # consumption_item(startime)
+            # consumption=item_consumption(startime)
             
             
             
-            create_consumtion(startime,endtime,consumption)
+            # create_consumtion(startime,endtime,consumption)
 
 
     prices=select_prices()
@@ -60,7 +60,7 @@ def insert():
 
 schedule.every().day.at("00:01").do(insert)
 
-
+# schedule.every().hour.do()
 
 
 while True:
