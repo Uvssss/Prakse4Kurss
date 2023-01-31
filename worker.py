@@ -27,18 +27,22 @@ def insert():
                 continue
             sSplit = row[ 'StartTime'].replace('T', ' ')  
             eSplit = row[ 'EndTime'].replace('T', ' ')    
-            value=dayData['Value'].replace(",",".")
+            value=dayData['Value'].replace(",",".") 
+            sSplit = datetime.strptime(sSplit,"%Y-%m-%d %H:%M:%S") 
+            eSplit = datetime.strptime(eSplit,"%Y-%m-%d %H:%M:%S") 
+            sSplit=sSplit - timedelta(days=1)
+            eSplit=eSplit - timedelta(days=1)
             value=float(value)
             converted_val=value/1000
             insert_nordpool_prices(sSplit,eSplit,converted_val)
-
+    create_consumtion()
 
 
 def insert_nordpool_prices(starttime,endtime,price):
     try:
         fixed_cost = float(config.get('fixed_price', 'fixed_LV_price'))
         cursor = connection.cursor()
-        mySql_insert_query = """INSERT INTO prices (`startime`,`endtime`,`nordprice`,`static_price`) 
+        mySql_insert_query = """INSERT INTO prices (`startime`,`endtime`,`nord_price`,`static_price`) 
 	                                            VALUES (%s,%s,%s,%s) """       
         record = (starttime,endtime,price,fixed_cost,)
         cursor.execute(mySql_insert_query, record)
@@ -66,20 +70,20 @@ def create_consumtion():
         cursor = connection.cursor()
         consumption=random.uniform(10,60)
         now=datetime.now()
-        dateOfInterest = now.strftime('%Y-%m-%d')
-        startime = datetime.strptime(dateOfInterest, '%Y-%m-%d')
+        dateOfInterest = now.strftime('%Y-%m-%d %H:%M:%S')
+        startime = datetime.strptime(dateOfInterest, '%Y-%m-%d %H:%M:%S')
         endtime = startime + timedelta(hours=1)
-        # print(startime,endtime)
+        endtime=endtime.strftime('%Y-%m-%d %H:00:00')
+        # print(startime,endtime,consumption)
         mySql_insert_query = """INSERT INTO total_consumption (`startime`,`endtime`,consumption) 
 	    VALUES (%s, %s, %s) """       
-        record = (startime,endtime, consumption)
+        record = (startime,endtime,consumption)
         cursor.execute(mySql_insert_query, record)
         connection.commit()
-        print("Inserted successfully")
+        # print("Inserted successfully")
         logger.info("Inserted successfully")    
 
     except mysql.connector.Error as error:
-        print("Insert")
         logger.error("Failed to insert into MySQL table {}".format(error))     
 
 #  YYYY-MM-DD HH:MM:SS
@@ -108,3 +112,16 @@ def get_lowest(value):
     except mysql.connector.Error as e:
         logger.error("Error using select_bateryinfo", e)
 
+def electricity():
+    try:
+        fixed_cost = float(config.get('fixed_price', 'fixed_LV_price'))
+        cursor = connection.cursor()
+        mySql_insert_query = """INSERT INTO prices (`startime`,`endtime`,`nord_price`,`static_price`) 
+	                                            VALUES (%s,%s,%s,%s) """       
+        record = ()
+        cursor.execute(mySql_insert_query, record)
+        connection.commit()
+        logger.info("inserted successfully")    
+
+    except mysql.connector.Error as error:
+        logger.error("Failed to insert into MySQL table {}".format(error))
