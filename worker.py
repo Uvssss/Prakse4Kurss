@@ -7,6 +7,59 @@ mysql_config_mysql_user = config.get('mysql_config', 'mysql_user')
 mysql_config_mysql_pass = config.get('mysql_config', 'mysql_pass')
 connection = mysql.connector.connect(host=mysql_config_mysql_host, database=mysql_config_mysql_db, user=mysql_config_mysql_user, password=mysql_config_mysql_pass)
 logger = logging.getLogger('root')
+
+
+def insert():        
+    print('start')
+    now=datetime.now()
+    response = requests.get('https://www.nordpoolgroup.com/api/marketdata/page/59?currency=,,,EUR')
+    dateOfInterest = now.strftime('%d-%m-%Y')
+    jayson = json.loads (response.text)
+    config = ConfigParser()
+    config.read('config.ini')
+    mysql_config_mysql_host = config.get('mysql_config', 'mysql_host')
+    mysql_config_mysql_db = config.get('mysql_config', 'mysql_db')
+    mysql_config_mysql_user = config.get('mysql_config', 'mysql_user')
+    mysql_config_mysql_pass = config.get('mysql_config', 'mysql_pass')
+    connection = mysql.connector.connect(host=mysql_config_mysql_host, database=mysql_config_mysql_db, user=mysql_config_mysql_user, password=mysql_config_mysql_pass)
+    # Loading logging configuration
+    logger = logging.getLogger('root')
+
+    for row in jayson ['data']['Rows'] :
+        if row['IsExtraRow']:
+            continue
+        for dayData in row[ 'Columns']:
+            if (dayData[ 'Name'] != dateOfInterest):
+                continue
+            sSplit = row[ 'StartTime'].replace('T', ' ')  
+            eSplit = row[ 'EndTime'].replace('T', ' ')    
+            startime=datetime.strptime(sSplit,"%Y-%m-%d %H:%M:%S")
+            endtime=datetime.strptime(eSplit,"%Y-%m-%d %H:%M:%S")
+            value=dayData['Value'].replace(",",".")
+            value=float(value)
+            converted_val=value/1000
+            insert_nordpool_prices(sSplit,eSplit,converted_val)
+            # consumption_item(startime)
+            # consumption=item_consumption(startime)
+            
+            
+            
+            # create_consumtion(startime,endtime,consumption)
+
+
+    # prices=select_prices()
+    # consumption=select_consumption()
+
+    # lowest=get_lowest(startime)
+    # highest=get_highest(startime)
+    
+    # battery=select_bateryinfo(3)
+    # saved_list=automaticsaving(prices,consumption,battery,lowest,highest)
+    # insert_saved_list(saved_list)
+
+
+
+
 def insert_nordpool_prices(starttime,endtime,price):
     try:
         fixed_cost = float(config.get('fixed_price', 'fixed_LV_price'))
@@ -21,27 +74,17 @@ def insert_nordpool_prices(starttime,endtime,price):
     except mysql.connector.Error as error:
         logger.error("Failed to insert into MySQL table {}".format(error))
 
-# Gets all values that match todays date
 def select_prices():
     try:
-        # Dabū šodienas datumu
         now=datetime.now()
-        # Pārmaina datuma formātu un datu tipu uz string un formatu uz YYYY-MM-DD
         dateOfInterest = now.strftime('%Y-%m-%d')
-        # Iepriekšējais string datu tips tiek mainīts uz datetime datu tipu, ar iepriekš iznāmu formātu
         datetime_object = datetime.strptime(dateOfInterest, '%Y-%m-%d')
-        # Tiek izveidots query, ar mainīgo kas tiks nākamajā ievadīts
         sql_select_Query = "select startime,endtime,price,electricty_id from prices where left(startime,10)= left(%s,10)"
-        # Sagatavo savienojumu ar datubazi un python
         cursor = connection.cursor()
-        # Palaiz izveidoto query ar izveidotiem datiem
         cursor.execute(sql_select_Query,((datetime_object),))
-            # get all records
         records = cursor.fetchall()
-        # Padod tālāk datus
         return records
     except mysql.connector.Error as e:
-        # Izvada kļūdas ja ir
         logger.error("Error using select_prices", e)
 
 def consumption_item(startime):
@@ -88,30 +131,20 @@ def create_consumtion(startime,endtime,consumntion):
 
 def select_consumption():
     try:
-        # Dabū šodienas datumu
         now=datetime.now()
-        # Pārmaina datuma formātu un datu tipu uz string un formatu uz YYYY-MM-DD
         dateOfInterest = now.strftime('%Y-%m-%d')
-        # Iepriekšējais string datu tips tiek mainīts uz datetime datu tipu, ar iepriekš iznāmu formātu
         datetime_object = datetime.strptime(dateOfInterest, '%Y-%m-%d')
-        # Tiek izveidots query, ar mainīgo kas tiks nākamajā ievadīts
         sql_select_Query = "select startime,endtime,used from electricity_used where left(startime,10)= left(%s,10)"
-        # Sagatavo savienojumu ar datubazi un python
         cursor = connection.cursor()
-        # Palaiz izveidoto query ar izveidotiem datiem
         cursor.execute(sql_select_Query,(datetime_object,))
-            # get all records
         records = cursor.fetchall()
-        # Padod tālāk datus
         return records
     except mysql.connector.Error as e:
-        # Izvada kļūdas ja ir
         logger.error("Error using select_consumption", e)
 
 def get_highest(value):
     try:
-        #  make a for loop that changes the endtime part of the list to -1 day so its possible to get that days lowest
-        #  same with highest
+
         sql_select_Query = "select startime,endtime,max(price),electricty_id from prices where left(startime,10)=left(%s,10);"
         cursor = connection.cursor()
         cursor.execute(sql_select_Query,(value,))
