@@ -19,7 +19,6 @@ min_date_obj = datetime.strptime(min_date, '%Y-%m-%d %H:%M:%S')
 min_date=min_date_obj - timedelta(days=1)
 max_date= max_date_obj- timedelta(days=1)
 
-
 create_consumtion()
 
 # lowest=get_lowest(min_date)

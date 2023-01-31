@@ -61,19 +61,25 @@ def select_prices():
     except mysql.connector.Error as e:
         logger.error("Error using select_prices", e)
 
-def create_consumtion(startime,endtime,):
+def create_consumtion():
     try:
         cursor = connection.cursor()
-        consumption=random.uniform(10,60,2)
-        print(consumption)
+        consumption=random.uniform(10,60)
+        now=datetime.now()
+        dateOfInterest = now.strftime('%Y-%m-%d')
+        startime = datetime.strptime(dateOfInterest, '%Y-%m-%d')
+        endtime = startime + timedelta(hours=1)
+        # print(startime,endtime)
         mySql_insert_query = """INSERT INTO total_consumption (`startime`,`endtime`,consumption) 
-	                                            VALUES (%s, %s, %s) """       
-        # record = (startime,endtime,)
-        # cursor.execute(mySql_insert_query, record)
-        # connection.commit()
-        logger.info(" inserted successfully")    
+	    VALUES (%s, %s, %s) """       
+        record = (startime,endtime, consumption)
+        cursor.execute(mySql_insert_query, record)
+        connection.commit()
+        print("Inserted successfully")
+        logger.info("Inserted successfully")    
 
     except mysql.connector.Error as error:
+        print("Insert")
         logger.error("Failed to insert into MySQL table {}".format(error))     
 
 #  YYYY-MM-DD HH:MM:SS
