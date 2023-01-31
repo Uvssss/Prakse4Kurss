@@ -1,5 +1,8 @@
-create table total_consumption(
-    startime varchar(100) not null,
-    endtime varchar(100) not null,
-    consumption float not null
+create table battery(
+    id int not null,
+    `name` varchar(45) not null,
+    `max_capacity` float not null,
+    `current_capacity` float not null,
+    `charge_power` float not null,
+    foreign key(id) references electricity(id)
 );
