@@ -1,6 +1,4 @@
-import requests
-import json
-from datetime import datetime,timedelta
+
 import schedule
 import time
 from main import *
