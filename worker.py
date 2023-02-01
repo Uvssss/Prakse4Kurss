@@ -73,13 +73,11 @@ def create_consumtion():
         startime = datetime.strptime(dateOfInterest, '%Y-%m-%d %H:%M:%S')
         endtime = startime + timedelta(hours=1)
         endtime=endtime.strftime('%Y-%m-%d %H:00:00')
-        # print(startime,endtime,consumption)
         mySql_insert_query = """INSERT INTO total_consumption (`startime`,`endtime`,consumption) 
 	    VALUES (%s, %s, %s) """       
         record = (startime,endtime,consumption)
         cursor.execute(mySql_insert_query, record)
         connection.commit()
-        # print("Inserted successfully")
         logger.info("Inserted successfully")    
 
     except mysql.connector.Error as error:
@@ -150,7 +148,7 @@ def insert_battery_info(id,status):
         endtime = startime + timedelta(hours=1)
         endtime=endtime.strftime('%Y-%m-%d %H:00:00')             
         price = """select best_price from connection where left(startime,13)= left(%s,13) """     
-                                     
+   
         if status==1:
             cap= """Select capacity from battery_info where left(startime,13)= left(%s,13) """
             kw = """SELECT consumption FROM total_consumption where left(startime,13)= left(%s,13)"""
@@ -161,10 +159,10 @@ def insert_battery_info(id,status):
             connection.commit()
             logger.info("inserted successfully")
         if status ==0:
-            kw= "???"
-            cursor.execute(kw, [startime])
-            records = cursor.fetchall()
-            record = (id,startime,endtime,records[0],price,0)
+            kw=random.uniform(1,10)
+            # cursor.execute(kw, [startime])
+            # records = cursor.fetchall()
+            record = (id,startime,endtime,kw,price,0)
             cursor.execute(mySql_insert_query, record)
             connection.commit()
             logger.info("inserted successfully")

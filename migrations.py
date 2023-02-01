@@ -191,10 +191,11 @@ def trigger():
             set @startime=(select startime from total_consumption order by startime desc limit 1);
             set @endtime=(select endtime from total_consumption order by startime desc limit 1);
             set @cons=(select consumption from total_consumption order by startime desc limit 1);
-            set @price=(select best_price from `connection` where left(@startime,13)=left(startime,13) limit 1);
+            set @price=(select best_price from `connection` where left(startime,13)=left(@startime,13) limit 1);
+            set @expenses=(select @price*@cons);
             INSERT INTO electricityprice.total_cost
-            (startime,endtime,price,consumption) VALUES
-            (@startime,@endtime,@price,@cons);
+            (startime,endtime,price,consumption,expenses) VALUES
+            (@startime,@endtime,@price,@cons,@expenses);
         end"""
 		cursor.execute(trigger)
 		connection.commit()
