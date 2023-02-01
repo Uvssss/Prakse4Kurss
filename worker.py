@@ -116,7 +116,7 @@ def electricity():
     try:
         fixed_cost = float(config.get('fixed_price', 'fixed_LV_price'))
         cursor = connection.cursor()
-        mySql_insert_query = """INSERT INTO  (`startime`,`endtime`,`nord_price`,`static_price`) 
+        mySql_insert_query = """INSERT INTO prices (`startime`,`endtime`,`nord_price`,`static_price`) 
 	                                            VALUES (%s,%s,%s,%s) """       
         record = ()
         cursor.execute(mySql_insert_query, record)
