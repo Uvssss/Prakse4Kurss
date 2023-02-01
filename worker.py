@@ -30,12 +30,11 @@ def insert():
             value=dayData['Value'].replace(",",".") 
             sSplit = datetime.strptime(sSplit,"%Y-%m-%d %H:%M:%S") 
             eSplit = datetime.strptime(eSplit,"%Y-%m-%d %H:%M:%S") 
-            sSplit=sSplit - timedelta(days=1)
-            eSplit=eSplit - timedelta(days=1)
+            # sSplit=sSplit - timedelta(days=1)
+            # eSplit=eSplit - timedelta(days=1)
             value=float(value)
             converted_val=value/1000
             insert_nordpool_prices(sSplit,eSplit,converted_val)
-    create_consumtion()
 
 
 def insert_nordpool_prices(starttime,endtime,price):
@@ -112,6 +111,18 @@ def get_lowest(value):
     except mysql.connector.Error as e:
         logger.error("Error using select_bateryinfo", e)
 
+def electricity():
+    try:
+        cursor = connection.cursor()
+        mySql_insert_query = """INSERT INTO electricity (`name`) VALUES (%s) """       
+        name=input("insert name")
+        cursor.execute(mySql_insert_query, [name])
+        connection.commit()
+        logger.info("inserted successfully")    
+
+    except mysql.connector.Error as error:
+        logger.error("Failed to insert into MySQL table {}".format(error))
+
 def append_new_battery(id):
     try:
         if bool(config.get('battery', 'capacity')) == False:
@@ -126,5 +137,41 @@ def append_new_battery(id):
         cursor.execute(mySql_insert_query, record)
         connection.commit()
         logger.info("inserted successfully")        
+    except mysql.connector.Error as error:
+        logger.error("Failed to insert into MySQL table {}".format(error))
+
+def insert_battery_info(id,status):
+    try:
+        cursor = connection.cursor()
+        mySql_insert_query = """INSERT INTO battery_info (`id`,`startime`,`endtime`,`capacity`,`KW`,`price`,`status`) VALUES (%s,%s,%s,%s,%s,%s) """  
+        now=datetime.now()
+        dateOfInterest = now.strftime('%Y-%m-%d %H:%M:%S')
+        startime = datetime.strptime(dateOfInterest, '%Y-%m-%d %H:%M:%S')
+        endtime = startime + timedelta(hours=1)
+        endtime=endtime.strftime('%Y-%m-%d %H:00:00')             
+        price = """select best_price from connection where left(startime,13)= left(%s,13) """     
+                                     
+        if status==1:
+            cap= """Select capacity from battery_info where left(startime,13)= left(%s,13) """
+            kw = """SELECT consumption FROM total_consumption where left(startime,13)= left(%s,13)"""
+            cursor.execute(kw, [startime])
+            records = cursor.fetchall()
+            record = (id,startime,endtime,cap,records[0],price,0)
+            cursor.execute(mySql_insert_query, record)
+            connection.commit()
+            logger.info("inserted successfully")
+        if status ==0:
+            kw= "???"
+            cursor.execute(kw, [startime])
+            records = cursor.fetchall()
+            record = (id,startime,endtime,records[0],price,0)
+            cursor.execute(mySql_insert_query, record)
+            connection.commit()
+            logger.info("inserted successfully")
+
+            #  kw utt 
+            #  variable nosaukumiem jabut vienadiem
+        # talak rakstit fuckijas main indent kas ir tiesi zem try    
+
     except mysql.connector.Error as error:
         logger.error("Failed to insert into MySQL table {}".format(error))

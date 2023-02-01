@@ -69,3 +69,77 @@
 2023-02-01 09:55:32,176 - INFO - migrations : OK
 2023-02-01 09:55:32,249 - INFO - migrations : trigger made
 2023-02-01 09:55:32,322 - INFO - migrations : trigger made
+2023-02-01 11:51:03,968 - INFO - migrations : DB migration service
+2023-02-01 11:51:03,968 - INFO - migrations : Loading configuration from file
+2023-02-01 11:51:03,969 - INFO - migrations : DONE
+2023-02-01 11:51:03,997 - INFO - migrations : Connecting to MySQL DB
+2023-02-01 11:51:03,998 - INFO - migrations : Connected to MySQL database. MySQL Server version on 8.0.27
+2023-02-01 11:51:04,058 - INFO - migrations : Executing: 2023-01-30-0000001.sql
+2023-02-01 11:51:04,091 - INFO - migrations : None
+2023-02-01 11:51:04,096 - INFO - migrations : OK
+2023-02-01 11:51:04,099 - INFO - migrations : Executing: 2023-01-30-0000002.sql
+2023-02-01 11:51:04,145 - INFO - migrations : None
+2023-02-01 11:51:04,168 - INFO - migrations : OK
+2023-02-01 11:51:04,171 - INFO - migrations : Executing: 2023-01-30-0000003.sql
+2023-02-01 11:51:04,274 - INFO - migrations : None
+2023-02-01 11:51:04,286 - INFO - migrations : OK
+2023-02-01 11:51:04,291 - INFO - migrations : Executing: 2023-01-30-0000004.sql
+2023-02-01 11:51:04,341 - INFO - migrations : None
+2023-02-01 11:51:04,346 - INFO - migrations : OK
+2023-02-01 11:51:04,349 - INFO - migrations : Executing: 2023-01-30-0000005.sql
+2023-02-01 11:51:04,391 - INFO - migrations : None
+2023-02-01 11:51:04,395 - INFO - migrations : OK
+2023-02-01 11:51:04,399 - INFO - migrations : Executing: 2023-01-30-0000006.sql
+2023-02-01 11:51:04,450 - INFO - migrations : None
+2023-02-01 11:51:04,455 - INFO - migrations : OK
+2023-02-01 11:51:04,458 - INFO - migrations : Executing: 2023-01-30-0000007.sql
+2023-02-01 11:51:04,494 - INFO - migrations : None
+2023-02-01 11:51:04,506 - INFO - migrations : OK
+2023-02-01 11:51:04,509 - INFO - migrations : Executing: 2023-01-31-0000000.sql
+2023-02-01 11:51:04,513 - INFO - migrations : None
+2023-02-01 11:51:04,524 - INFO - migrations : OK
+2023-02-01 11:51:04,527 - INFO - migrations : Executing: 2023-01-31-0000001.sql
+2023-02-01 11:51:04,528 - INFO - migrations : None
+2023-02-01 11:51:04,536 - INFO - migrations : OK
+2023-02-01 11:51:04,538 - INFO - migrations : Executing: 2023-01-31-0000002.sql
+2023-02-01 11:51:04,539 - INFO - migrations : None
+2023-02-01 11:51:04,548 - INFO - migrations : OK
+2023-02-01 11:51:04,568 - INFO - migrations : trigger made
+2023-02-01 11:51:04,578 - INFO - migrations : trigger made
+2023-02-01 11:56:46,727 - INFO - migrations : DB migration service
+2023-02-01 11:56:46,728 - INFO - migrations : Loading configuration from file
+2023-02-01 11:56:46,729 - INFO - migrations : DONE
+2023-02-01 11:56:46,754 - INFO - migrations : Connecting to MySQL DB
+2023-02-01 11:56:46,755 - INFO - migrations : Connected to MySQL database. MySQL Server version on 8.0.27
+2023-02-01 11:56:46,901 - INFO - migrations : Executing: 2023-01-30-0000001.sql
+2023-02-01 11:56:46,963 - INFO - migrations : None
+2023-02-01 11:56:46,973 - INFO - migrations : OK
+2023-02-01 11:56:46,976 - INFO - migrations : Executing: 2023-01-30-0000002.sql
+2023-02-01 11:56:47,046 - INFO - migrations : None
+2023-02-01 11:56:47,062 - INFO - migrations : OK
+2023-02-01 11:56:47,072 - INFO - migrations : Executing: 2023-01-30-0000003.sql
+2023-02-01 11:56:47,204 - INFO - migrations : None
+2023-02-01 11:56:47,216 - INFO - migrations : OK
+2023-02-01 11:56:47,222 - INFO - migrations : Executing: 2023-01-30-0000004.sql
+2023-02-01 11:56:47,412 - INFO - migrations : None
+2023-02-01 11:56:47,456 - INFO - migrations : OK
+2023-02-01 11:56:47,458 - INFO - migrations : Executing: 2023-01-30-0000005.sql
+2023-02-01 11:56:47,593 - INFO - migrations : None
+2023-02-01 11:56:47,617 - INFO - migrations : OK
+2023-02-01 11:56:47,621 - INFO - migrations : Executing: 2023-01-30-0000006.sql
+2023-02-01 11:56:47,760 - INFO - migrations : None
+2023-02-01 11:56:47,784 - INFO - migrations : OK
+2023-02-01 11:56:47,786 - INFO - migrations : Executing: 2023-01-30-0000007.sql
+2023-02-01 11:56:47,868 - INFO - migrations : None
+2023-02-01 11:56:47,893 - INFO - migrations : OK
+2023-02-01 11:56:47,895 - INFO - migrations : Executing: 2023-01-31-0000000.sql
+2023-02-01 11:56:47,897 - INFO - migrations : None
+2023-02-01 11:56:47,932 - INFO - migrations : OK
+2023-02-01 11:56:47,934 - INFO - migrations : Executing: 2023-01-31-0000001.sql
+2023-02-01 11:56:47,941 - INFO - migrations : None
+2023-02-01 11:56:47,971 - INFO - migrations : OK
+2023-02-01 11:56:47,974 - INFO - migrations : Executing: 2023-01-31-0000002.sql
+2023-02-01 11:56:47,976 - INFO - migrations : None
+2023-02-01 11:56:48,005 - INFO - migrations : OK
+2023-02-01 11:56:48,047 - INFO - migrations : trigger made
+2023-02-01 11:56:48,081 - INFO - migrations : trigger made
