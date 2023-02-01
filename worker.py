@@ -112,16 +112,19 @@ def get_lowest(value):
     except mysql.connector.Error as e:
         logger.error("Error using select_bateryinfo", e)
 
-def electricity():
+def append_new_battery(id):
     try:
-        fixed_cost = float(config.get('fixed_price', 'fixed_LV_price'))
+        if bool(config.get('battery', 'capacity')) == False:
+            capacity=float(input("Input battery Capacity: "))
+            chargepower=float(input("Input battery Charge Power: "))
+        if bool(config.get('battery', 'capacity')) == True:
+            capacity=float(config.get('battery', 'capacity'))
+            chargepower=float(config.get('battery', 'chargepower'))
         cursor = connection.cursor()
-        mySql_insert_query = """INSERT INTO  (`startime`,`endtime`,`nord_price`,`static_price`) 
-	                                            VALUES (%s,%s,%s,%s) """       
-        record = ()
+        mySql_insert_query = """ insert into battery (`id`,`max_capacity`,`charge_power`) Values (%s,%s,%s) """       
+        record = (id,capacity,chargepower)
         cursor.execute(mySql_insert_query, record)
         connection.commit()
-        logger.info("inserted successfully")    
-
+        logger.info("inserted successfully")        
     except mysql.connector.Error as error:
         logger.error("Failed to insert into MySQL table {}".format(error))

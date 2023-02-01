@@ -2,6 +2,7 @@ create table battery_info(
     id int not null,
     startime varchar(100) not null,
     endtime varchar(100) not null,
+    `current_capacity` float not null,
     KW float not null,
     price float not null,
     `status` tinyint(1) not null,
