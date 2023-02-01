@@ -121,7 +121,6 @@ def append_new_battery(id):
             capacity=float(config.get('battery', 'capacity'))
             chargepower=float(config.get('battery', 'chargepower'))
         cursor = connection.cursor()       
-        record = ()
         mySql_insert_query = """ insert into battery (`id`,`max_capacity`,`charge_power`) Values (%s,%s,%s) """       
         record = (id,capacity,chargepower)
         cursor.execute(mySql_insert_query, record)
