@@ -4,4 +4,4 @@ from worker import *
 import requests
 from datetime import datetime,timedelta
 
-insert()
+print(config.get("battery"))
