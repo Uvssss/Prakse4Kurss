@@ -1,4 +1,4 @@
 log/
 log/*
-pycache/
-pycache/*
+__pycache__/
+__pycache__/*

@@ -30,8 +30,8 @@ def insert():
             value=dayData['Value'].replace(",",".") 
             sSplit = datetime.strptime(sSplit,"%Y-%m-%d %H:%M:%S") 
             eSplit = datetime.strptime(eSplit,"%Y-%m-%d %H:%M:%S") 
-            # sSplit=sSplit - timedelta(days=1)
-            # eSplit=eSplit - timedelta(days=1)
+            sSplit=sSplit - timedelta(days=1)
+            eSplit=eSplit - timedelta(days=1)
             value=float(value)
             converted_val=value/1000
             insert_nordpool_prices(sSplit,eSplit,converted_val)
@@ -121,7 +121,7 @@ def electricity():
     except mysql.connector.Error as error:
         logger.error("Failed to insert into MySQL table {}".format(error))
 
-def append_new_battery(id):
+def append_new_battery(id,):
     try:
         if bool(config.get('battery', 'capacity')) == False:
             capacity=float(input("Input battery Capacity: "))
@@ -150,14 +150,18 @@ def insert_battery_info(id,status):
         price = """select best_price from connection where left(startime,13)= left(%s,13) order by startime desc limit 1 """   
         cursor.execute(price, [startime])  
         price = cursor.fetchall()
-        cap= """Select capacity from battery_info where left(startime,13)= left(%s,13) order by startime DESC limit 1  """
-        cursor.execute(cap, [startime])
+        cap= """Select capacity from battery_info where left(startime,13)= left(%s,13) and id=%s order by startime DESC limit 1  """
+        cursor.execute(cap, [startime,id])
         cap = cursor.fetchall()
+        if bool(cap)== False:
+            cap="select max_capacity from battery where id=%s"
+            cursor.execute(cap, [id])
+            cap = cursor.fetchall()
         if status==1:
             kw = """SELECT consumption FROM total_consumption where left(startime,13)= left(%s,13) order by startime DESC limit 1"""
             cursor.execute(kw, [startime])
             kw1 = cursor.fetchall()
-            record = (id,startime,endtime,(float(cap[0][0])-float(kw1[0][0])),kw1[0][0],price[0][0],1)
+            record = (id,startime,endtime,float(cap[0][0])-float(kw1[0][0]),kw1[0][0],price[0][0],1)
             cursor.execute(mySql_insert_query, record)
             connection.commit()
             logger.info("inserted successfully")
@@ -169,10 +173,39 @@ def insert_battery_info(id,status):
             logger.info("inserted successfully")
 
     except mysql.connector.Error as error:
-        logger.error("Failed to insert into MySQL table {}".format(error))
+        logger.error("Failed to insert into MySQL table {}".format(error)) 
+# hopefully done
+
 
 def battery_controller():
     try:
+        a=True
+        cursor = connection.cursor()
+        id="""select battery.id, name from battery 
+            inner join electricity on electricity.id=battery.id"""
+        cursor.execute(id)
+        main_records = cursor.fetchall()
+        while a==True:
+            print("If you want to create a new battery write 'new' ")
+            for row in main_records:
+                print("id = ", row[0], )
+                print("name = ", row[1])
+            id=input("input battery id : ")
+            if id=="new":
+                    electricity()
+                    new_id="""select id from electricity order by id desc limit 1"""
+                    cursor.execute(new_id)
+                    records = cursor.fetchall()
+                    append_new_battery(records[0][0])
+                    id=records[0][0]
+                    a=False
+            for row in main_records:
+                if int(id)==int(row[0]):
+                    a=False
+            print(id)
+
+        #  we got id
+
     # current cup, max cup, charge power,minmaxprice, consumption
     except mysql.connector.Error as error:
         logger.error("Failed to insert into MySQL table {}".format(error))

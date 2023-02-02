@@ -6,4 +6,6 @@ from datetime import datetime,timedelta
 
 # insert()
 # create_consumtion()
-insert_battery_info(3,1)
+# append_new_battery(3)
+# insert_battery_info(3,1)
+battery_controller()

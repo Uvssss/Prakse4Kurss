@@ -192,10 +192,26 @@ def trigger():
             set @endtime=(select endtime from total_consumption order by startime desc limit 1);
             set @cons=(select consumption from total_consumption order by startime desc limit 1);
             set @price=(select best_price from connection where left(startime,13)=left(@startime,13)limit 1);
-            set @expenses=(select @price*@cons);
-            INSERT INTO electricityprice.total_cost
-            (startime,endtime,price,consumption,expenses) VALUES
-            (@startime,@endtime,@price,@cons,@expenses);
+            set @statuss=(select `status` from battery_info where @endtime=endtime order by startime desc limit 1);
+            set @battery_consump=(select kw from battery_info where @endtime=endtime);
+            if @statuss= null then
+                set @expenses=(select @price*@cons);
+                INSERT INTO electricityprice.total_cost
+                (startime,endtime,price,consumption,expenses) VALUES
+                (@startime,@endtime,@price,@cons,@expenses);
+            end if;
+            if @statuss = 1 then
+                set @expenses=(select 0*@cons);
+                INSERT INTO electricityprice.total_cost
+                (startime,endtime,price,consumption,expenses) VALUES
+                (@startime,@endtime,@price,@cons,@expenses);
+            end if;
+            if @statuss =0 then
+                set @expenses=(select (@cons+@battery_consump)*@price);
+                INSERT INTO electricityprice.total_cost
+                (startime,endtime,price,consumption,expenses) VALUES
+                (@startime,@endtime,@price,@cons,@expenses);
+            end if; 
         end"""
 		cursor.execute(trigger)
 		connection.commit()
@@ -231,7 +247,5 @@ def establish_conn():
 
 	except mysql.connector.Error as err:
 		logger.error("No connection to db " + str(err))
-
-
 establish_conn()
 trigger()
