@@ -141,35 +141,38 @@ def append_new_battery(id):
 def insert_battery_info(id,status):
     try:
         cursor = connection.cursor()
-        mySql_insert_query = """INSERT INTO battery_info (`id`,`startime`,`endtime`,`capacity`,`KW`,`price`,`status`) VALUES (%s,%s,%s,%s,%s,%s) """  
+        mySql_insert_query = """INSERT INTO battery_info (`id`,`startime`,`endtime`,`capacity`,`KW`,`price`,`status`) VALUES (%s,%s,%s,%s,%s,%s,%s) """  
         now=datetime.now()
         dateOfInterest = now.strftime('%Y-%m-%d %H:%M:%S')
         startime = datetime.strptime(dateOfInterest, '%Y-%m-%d %H:%M:%S')
         endtime = startime + timedelta(hours=1)
         endtime=endtime.strftime('%Y-%m-%d %H:00:00')             
-        price = """select best_price from connection where left(startime,13)= left(%s,13) """     
-   
+        price = """select best_price from connection where left(startime,13)= left(%s,13) order by startime desc limit 1 """   
+        cursor.execute(price, [startime])  
+        price = cursor.fetchall()
+        cap= """Select capacity from battery_info where left(startime,13)= left(%s,13) order by startime DESC limit 1  """
+        cursor.execute(cap, [startime])
+        cap = cursor.fetchall()
         if status==1:
-            cap= """Select capacity from battery_info where left(startime,13)= left(%s,13) """
-            kw = """SELECT consumption FROM total_consumption where left(startime,13)= left(%s,13)"""
+            kw = """SELECT consumption FROM total_consumption where left(startime,13)= left(%s,13) order by startime DESC limit 1"""
             cursor.execute(kw, [startime])
-            records = cursor.fetchall()
-            record = (id,startime,endtime,cap,records[0],price,0)
+            kw1 = cursor.fetchall()
+            record = (id,startime,endtime,(float(cap[0][0])-float(kw1[0][0])),kw1[0][0],price[0][0],1)
             cursor.execute(mySql_insert_query, record)
             connection.commit()
             logger.info("inserted successfully")
         if status ==0:
             kw=random.uniform(1,10)
-            # cursor.execute(kw, [startime])
-            # records = cursor.fetchall()
-            record = (id,startime,endtime,kw,price,0)
+            record = (id,startime,endtime,cap[0][0],kw,price[0][0],0)
             cursor.execute(mySql_insert_query, record)
             connection.commit()
             logger.info("inserted successfully")
 
-            #  kw utt 
-            #  variable nosaukumiem jabut vienadiem
-        # talak rakstit fuckijas main indent kas ir tiesi zem try    
+    except mysql.connector.Error as error:
+        logger.error("Failed to insert into MySQL table {}".format(error))
 
+def battery_controller():
+    try:
+    # current cup, max cup, charge power,minmaxprice, consumption
     except mysql.connector.Error as error:
         logger.error("Failed to insert into MySQL table {}".format(error))
