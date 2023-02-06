@@ -30,8 +30,8 @@ def insert():
             value=dayData['Value'].replace(",",".") 
             sSplit = datetime.strptime(sSplit,"%Y-%m-%d %H:%M:%S") 
             eSplit = datetime.strptime(eSplit,"%Y-%m-%d %H:%M:%S") 
-            sSplit=sSplit - timedelta(days=1)
-            eSplit=eSplit - timedelta(days=1)
+            # sSplit=sSplit - timedelta(days=1)
+            # eSplit=eSplit - timedelta(days=1)
             value=float(value)
             converted_val=value/1000
             insert_nordpool_prices(sSplit,eSplit,converted_val)
@@ -121,27 +121,26 @@ def electricity():
     except mysql.connector.Error as error:
         logger.error("Failed to insert into MySQL table {}".format(error))
 
-def append_new_battery(id,):
+def append_new_battery(id):
     try:
-        if config.get("battery","status") == "Used":
-            capacity=float(input("Input battery Max Capacity: "))
-            chargepower=float(input("Input battery Charge Power: "))
-            cursor = connection.cursor()       
-            mySql_insert_query = """ insert into battery (`id`,`max_capacity`,`charge_power`) Values (%s,%s,%s) """       
-            record = (id,capacity,chargepower)
-            cursor.execute(mySql_insert_query, record)
-            connection.commit()
-            logger.info("inserted successfully")        
-        if config.get("battery","status")== "Not used":
-            capacity=float(config.get('battery', 'capacity'))
-            chargepower=float(config.get('battery', 'chargepower'))
-            config.set("battery","status","Used")
-            cursor = connection.cursor()       
-            mySql_insert_query = """ insert into battery (`id`,`max_capacity`,`charge_power`) Values (%s,%s,%s) """       
-            record = (id,capacity,chargepower)
-            cursor.execute(mySql_insert_query, record)
-            connection.commit()
-            logger.info("inserted successfully")        
+        # if config.get("battery","status")== "Not used":
+        #     capacity=float(config.get('battery', 'capacity'))
+        #     chargepower=float(config.get('battery', 'chargepower'))
+        #     config.set("battery","status","Used")
+        #     cursor = connection.cursor()       
+        #     mySql_insert_query = """ insert into battery (`id`,`max_capacity`,`charge_power`) Values (%s,%s,%s) """       
+        #     record = (id,capacity,chargepower)
+        #     cursor.execute(mySql_insert_query, record)
+        #     connection.commit()
+        #     logger.info("inserted successfully")
+        # capacity=float(input("Input battery Max Capacity: "))
+        # chargepower=float(input("Input battery Charge Power: "))
+        # cursor = connection.cursor()       
+        # mySql_insert_query = """ insert into battery (`id`,`max_capacity`,`charge_power`) Values (%s,%s,%s) """       
+        # record = (id,capacity,chargepower)
+        # cursor.execute(mySql_insert_query, record)
+        # connection.commit()
+        # logger.info("inserted successfully")                    
     except mysql.connector.Error as error:
         logger.error("Failed to insert into MySQL table {}".format(error))
 
@@ -187,6 +186,17 @@ def percentcalc(cur,max):
     percent=cur/max *100
     return percent
 
+def select_consumption(startime):
+    try:
+        sql_select_Query = "select consumption from total_consumption where left(startime,10)=left(%s,10);"
+        cursor = connection.cursor()
+        cursor.execute(sql_select_Query,(startime,))
+        records = cursor.fetchall()
+        return records
+    except mysql.connector.Error as e:
+        logger.error("Error using select_bateryinfo", e)
+
+
 def battery_controller():
     try:
         a=True
@@ -213,11 +223,16 @@ def battery_controller():
                 if int(id)==int(row[0]):
                     a=False
             print(id)
-            
-            
-            
-
-
+            # [[startime,endtime,mainigais,id]]
+            now=datetime.now()
+            dateOfInterest = now.strftime('%Y-%m-%d %H:%M:%S')
+            # startime = datetime.strptime(dateOfInterest, '%Y-%m-%d %H:%M:%S')
+            # cur_cap=
+            # max_cap=
+            # charge_power=
+            # min_price=get_lowest(startime)
+            # max_price=get_highest(startime)
+            # consumption=
     # current cup, max cup, charge power,minmaxprice, consumption
     except mysql.connector.Error as error:
         logger.error("Failed to insert into MySQL table {}".format(error))
