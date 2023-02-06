@@ -123,12 +123,13 @@ def electricity():
 
 def append_new_battery(id,):
     try:
-        if bool(config.get('battery', 'capacity')) == False:
+        if config.get("battery","status") == "Used":
             capacity=float(input("Input battery Capacity: "))
             chargepower=float(input("Input battery Charge Power: "))
-        if bool(config.get('battery', 'capacity')) == True:
+        if config.get("battery","status")== "Not used":
             capacity=float(config.get('battery', 'capacity'))
             chargepower=float(config.get('battery', 'chargepower'))
+            config.write
         cursor = connection.cursor()       
         mySql_insert_query = """ insert into battery (`id`,`max_capacity`,`charge_power`) Values (%s,%s,%s) """       
         record = (id,capacity,chargepower)
@@ -176,6 +177,9 @@ def insert_battery_info(id,status):
         logger.error("Failed to insert into MySQL table {}".format(error)) 
 # hopefully done
 
+def percentcalc(cur,max):
+    percent=cur/max *100
+    return percent
 
 def battery_controller():
     try:
@@ -203,8 +207,7 @@ def battery_controller():
                 if int(id)==int(row[0]):
                     a=False
             print(id)
-
-        #  we got id
+    
 
     # current cup, max cup, charge power,minmaxprice, consumption
     except mysql.connector.Error as error:
