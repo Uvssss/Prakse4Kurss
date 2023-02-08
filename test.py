@@ -4,6 +4,8 @@ from worker import *
 import requests
 from datetime import datetime,timedelta
 
+# insert_battery_info(3,1,'2023-02-08 15:51:09')
+# print
 insert()
 append_new_battery(3)
 battery_controller(3)
@@ -16,6 +18,8 @@ battery_controller(3)
 # now=datetime.now()
 # dateOfInterest = now.strftime('%Y-%m-%d %H:%M:%S')
 # startime = datetime.strptime(dateOfInterest, '%Y-%m-%d %H:%M:%S')
+
+# print(str(startime)[0:14])
 # select_consumption('2023-02-07 11:50:38')
 # get_consumption('2023-02-07 12:21:16')
 # print(bool(select_battery_info(3)))

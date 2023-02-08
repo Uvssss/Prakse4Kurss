@@ -91,7 +91,7 @@ def create_consumtion():
 def get_highest(value):
     try:
 
-        sql_select_Query = "select max(best_price) from connection where left(startime,10)=left(%s,10);"
+        sql_select_Query = "select max(best_price),startime from connection where left(startime,10)=left(%s,10) group by startime order by max(best_price) desc limit 1 ;"
         cursor = connection.cursor()
         cursor.execute(sql_select_Query,(value,))
         records = cursor.fetchall()
@@ -101,7 +101,7 @@ def get_highest(value):
 
 def get_lowest(value):
     try:
-        sql_select_Query = "select min(best_price) from connection where left(startime,10)=left(%s,10);"
+        sql_select_Query = "select min(best_price) as best_price,startime from connection where left(startime,10)=left(%s,10) group by startime order by best_price limit 1 ;"
         cursor = connection.cursor()
         cursor.execute(sql_select_Query,(value,))
         records = cursor.fetchall()
@@ -187,10 +187,6 @@ def insert_battery_info(id,status):
     except mysql.connector.Error as error:
         logger.error("Failed to insert into MySQL table {}".format(error)) 
 # hopefully done
-
-def percentcalc(cur,max):
-    percent=cur/max *100
-    return percent
 
 def select_consumption(startime):
     try:

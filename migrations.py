@@ -170,14 +170,14 @@ for migration in migrations_list:
 			logger.debug(migration_sql)
 			logger.info("Executing: " + str(migration))
 			if mysql_exec_any_sql(migration_sql) == 0:
-				mig_exec_ts = int(time.time())
+				mig_exec_ts = int(time.time()) 
 				mig_exec_dt = datetime.utcfromtimestamp(mig_exec_ts).strftime('%Y-%m-%d %H:%M:%S')
 				mysql_migration_value_insert(migration, mig_exec_ts, mig_exec_dt)
 				logger.info("OK")
 				counter += 1
 			else:
 				logger.error("Problem applying migration. Aborting")
-				break
+				break 
 if counter == 0:
 	logger.info("No migrations to execute")	
 
@@ -191,11 +191,9 @@ def trigger():
             set @startime=(select startime from total_consumption order by startime desc limit 1);
             set @endtime=(select endtime from total_consumption order by startime desc limit 1);
             set @cons=(select consumption from total_consumption order by startime desc limit 1);
-            set @price=(select best_price from connection where left(startime,13)=left(@startime,13)limit 1);
-            set @statuss=(select `status` from battery_info where @endtime=endtime order by startime desc limit 1);
-            set @battery_consump=(select kw from battery_info where @endtime=endtime);
-                set @expenses=(select @price*@cons);
-                INSERT INTO electricityprice.total_cost
+            set @price=(select best_price from connection where left(startime,13)=left(@startime,13) limit 1);
+            set @expenses=(select @price*@cons);
+            INSERT INTO electricityprice.total_cost
                 (startime,endtime,price,consumption,expenses) VALUES
                 (@startime,@endtime,@price,@cons,@expenses);
         end"""
@@ -267,7 +265,7 @@ def trigger22():
         end """
 		cursor.execute(trigger)
 		connection.commit()
-		logger.info("trigger made")
+		logger.info("trigger made")   
 
 
 	except mysql.connector.Error as err:
