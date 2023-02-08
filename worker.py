@@ -30,8 +30,8 @@ def insert():
             value=dayData['Value'].replace(",",".") 
             sSplit = datetime.strptime(sSplit,"%Y-%m-%d %H:%M:%S") 
             eSplit = datetime.strptime(eSplit,"%Y-%m-%d %H:%M:%S") 
-            # sSplit=sSplit - timedelta(days=1)
-            # eSplit=eSplit - timedelta(days=1)
+            sSplit=sSplit - timedelta(days=1)
+            eSplit=eSplit - timedelta(days=1)
             value=float(value)
             converted_val=value/1000
             insert_nordpool_prices(sSplit,eSplit,converted_val)
@@ -293,7 +293,7 @@ def battery_controller(id):
         for i in range(0, len(prices)):
             #  add consumption and to ifs add vai pietiek baterijai capacity
             if max_price[0][0] == prices[i][2] and cur_cap >= get_cons[0][0] :
-                # print("dss")
+                print("dss")
                 insert_battery_info(id,1)
                 connection_update(id,startime)
                 continue                
