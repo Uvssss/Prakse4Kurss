@@ -234,4 +234,4 @@ def establish_conn():
 		logger.error("No connection to db " + str(err))
 
 establish_conn()
-trigger()
+# trigger()

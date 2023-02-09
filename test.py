@@ -7,8 +7,9 @@ from datetime import datetime,timedelta
 # insert_battery_info(3,1,'2023-02-08 15:51:09')
 # print
 insert()
-append_new_battery(3)
-battery_controller(3)
+# connection_update(3,'2023-02-09 00:00:00' )
+# append_new_battery(3)
+# battery_controller(3)
 
 # max_cap="select max_capacity from battery where id = 3"
 # cursor = connection.cursor()
