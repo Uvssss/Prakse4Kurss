@@ -177,7 +177,7 @@ for migration in migrations_list:
 				counter += 1
 			else:
 				logger.error("Problem applying migration. Aborting")
-				break 
+				break
 if counter == 0:
 	logger.info("No migrations to execute")	
 
