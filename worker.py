@@ -30,8 +30,8 @@ def insert():
             value=dayData['Value'].replace(",",".") 
             sSplit = datetime.strptime(sSplit,"%Y-%m-%d %H:%M:%S") 
             eSplit = datetime.strptime(eSplit,"%Y-%m-%d %H:%M:%S") 
-            # sSplit=sSplit - timedelta(days=1)
-            # eSplit=eSplit - timedelta(days=1)
+            sSplit=sSplit - timedelta(days=1)
+            eSplit=eSplit - timedelta(days=1)
             value=float(value)
             converted_val=value/1000
             insert_nordpool_prices(sSplit,eSplit,converted_val)
