@@ -233,43 +233,5 @@ def establish_conn():
 	except mysql.connector.Error as err:
 		logger.error("No connection to db " + str(err))
 
-def trigger22():
-	try:
-		cursor.execute("drop trigger if exists `trigger22`")
-		trigger="""
-		create trigger `trigger22` after insert
-        on battery_info for each row
-        begin
-            set @startime=(select startime from total_consumption order by startime desc limit 1);
-            set @endtime=(select endtime from total_consumption order by startime desc limit 1);
-            set @cons=(select consumption from total_consumption order by startime desc limit 1);
-            set @price=(select best_price from connection where endtime=@endtime limit 1);
-            set @statuss=(select `status` from battery_info where @endtime=endtime order by startime desc limit 1);
-            set @battery_consump=(select kw from battery_info where @endtime=endtime and @statuss=status);
-            if @statuss = 1 then
-                set @expenses=(select 0*@cons);
-                UPDATE `electricityprice`.`total_cost` SET
-                price=@price,
-                consumption=@cons,
-                expenses=@expenses
-                WHERE @endtime=endtime;
-            end if;
-            if @statuss =0 then
-                set @expenses=(select (@cons+@battery_consump)*@price);
-             UPDATE `electricityprice`.`total_cost` SET
-                price=@price,
-                consumption=@cons,
-                expenses=@expenses
-                WHERE @endtime=endtime;
-            end if; 
-        end """
-		cursor.execute(trigger)
-		connection.commit()
-		logger.info("trigger made")   
-
-
-	except mysql.connector.Error as err:
-		logger.error("No connection to db " + str(err))
 establish_conn()
 trigger()
-trigger22()

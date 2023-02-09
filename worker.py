@@ -300,5 +300,21 @@ def battery_controller(id):
     # current cup, max cup, charge power,minmaxprice, consumption
     except mysql.connector.Error as error:
         logger.error("Failed to insert into MySQL table {}".format(error))
-        
+def automaticupdate(startime,endtime,cons,price,status,battery_consump):
+    if status==1:
+        print("dsaads")
+        expenses=0*cons
+        query="""UPDATE `electricityprice`.`total_cost` SET
+                price=%s,
+                consumption=%s,
+                expenses=%s
+                WHERE endtime=%s;"""
+    if status==0:
+        expenses=(cons+battery_consump)*rice
+        query="""UPDATE `electricityprice`.`total_cost` SET
+                price=%s,
+                consumption=%s,
+                expenses=%s
+                WHERE endtime=%s;"""
+        print("asddas")
         
