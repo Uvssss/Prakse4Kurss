@@ -30,8 +30,8 @@ def insert():
             value=dayData['Value'].replace(",",".") 
             sSplit = datetime.strptime(sSplit,"%Y-%m-%d %H:%M:%S") 
             eSplit = datetime.strptime(eSplit,"%Y-%m-%d %H:%M:%S") 
-            sSplit=sSplit - timedelta(days=1)
-            eSplit=eSplit - timedelta(days=1)
+            # sSplit=sSplit - timedelta(days=1)
+            # eSplit=eSplit - timedelta(days=1)
             value=float(value)
             converted_val=value/1000
             insert_nordpool_prices(sSplit,eSplit,converted_val)
@@ -265,24 +265,16 @@ def get_consumption(startime):
 def battery_controller(id):
     try:
         now=datetime.now()
-        dateOfInterest = now.strftime('%Y-%m-%d %H:%M:%S')
-        startime = datetime.strptime(dateOfInterest, '%Y-%m-%d %H:%M:%S')
+        startime = now.strftime('%Y-%m-%d %H:00:00')
+        # startime = datetime.strptime(dateOfInterest, '%Y-%m-%d %H:%M:%S')
         if bool(select_battery_info(id))==False:
             max_cap= select_battery(id)
             cur_cap= max_cap[0][1]
-            # charge_power= select_battery(id)
-            min_price=get_lowest(startime)
-            max_price=get_highest(startime)
-            # consumption= select_consumption(startime)
         if bool(select_battery_info(id))==True:
-            max_cap= select_battery(id)
             cur_cap= select_battery_info(id)
             cur_cap=cur_cap[0][4]
-            # charge_power= select_battery(id)
-            min_price=get_lowest(startime)
-            max_price=get_highest(startime)
-            # consumption= select_consumption(startime)
-            # battery_consumption=get_battery_sum(id,startime)
+        min_price=get_lowest(startime)
+        max_price=get_highest(startime)
         prices=select_connection(startime)
         create_consumtion()
         get_cons=get_consumption(startime)
@@ -290,17 +282,38 @@ def battery_controller(id):
             #  add consumption and to ifs add vai pietiek baterijai capacity
             if max_price[0][0] == prices[i][2] and cur_cap >= get_cons[0][0] :
                 print("dss")
-                insert_battery_info(id,1)
-                connection_update(id,startime)
+                connection_update(id,max_price[0][1])
+                if startime[0:13]== (max_price[0][1])[0:13]:
+                    insert_battery_info(id,1)
+                    automaticupdate(startime+timedelta(hours=1))
+
                 continue                
-            if min_price[0][0] == prices[i][2] :
+            if min_price[0][0] == prices[i][2] and startime[0:13]== (max_price[0][1])[0:13]:
                 print("2w323")
                 insert_battery_info(id,0)
+                automaticupdate(startime+timedelta(hours=1))
                 continue
     # current cup, max cup, charge power,minmaxprice, consumption
     except mysql.connector.Error as error:
         logger.error("Failed to insert into MySQL table {}".format(error))
-def automaticupdate(startime,endtime,cons,price,status,battery_consump):
+def automaticupdate(endtime):
+    cons="select consumption from total_consumption order by startime desc limit 1"
+    price="select best_price from connection where endtime = %s limit 1"
+    status="select status from battery_info where %s = endtime order by startime desc limit 1  "
+    battery_consump="select KW from battery_info where %s = endtime and %s = status"
+    
+    cursor.execute(cons)
+    cons = cursor.fetchall()
+    
+    cursor.execute(status,(endtime,))
+    status = cursor.fetchall()
+    
+    cursor.execute(price,(endtime,))
+    price = cursor.fetchall()
+    
+    cursor.execute(battery_consump,(endtime,status))
+    battery_consump = cursor.fetchall()
+    
     if status==1:
         print("dsaads")
         expenses=0*cons
@@ -309,12 +322,17 @@ def automaticupdate(startime,endtime,cons,price,status,battery_consump):
                 consumption=%s,
                 expenses=%s
                 WHERE endtime=%s;"""
+        cursor = connection.cursor()
+        cursor.execute(query,(price,cons,expenses,endtime))
+        connection.commit()    
     if status==0:
-        expenses=(cons+battery_consump)*rice
+        expenses=(cons+battery_consump)*price
+        print("asddas")
         query="""UPDATE `electricityprice`.`total_cost` SET
                 price=%s,
                 consumption=%s,
                 expenses=%s
                 WHERE endtime=%s;"""
-        print("asddas")
-        
+        cursor = connection.cursor()
+        cursor.execute(query,(price,cons+battery_consump,expenses,endtime))
+        connection.commit()        
