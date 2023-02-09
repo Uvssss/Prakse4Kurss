@@ -13,7 +13,7 @@ logger = logging.getLogger('root')
 
 
 def insert():        
-    print('start')
+    print('Function start')
     append_new_battery(3)
     now=datetime.now()
     response = requests.get('https://www.nordpoolgroup.com/api/marketdata/page/59?currency=,,,EUR')
@@ -37,8 +37,9 @@ def insert():
             converted_val=value/1000
             insert_nordpool_prices(sSplit,eSplit,converted_val)
             create_consumtion(sSplit,eSplit)
-            battery_controller(sSplit,eSplit)
+    battery_controller(3,sSplit,eSplit)
     total_cost(3)
+    print("Function end")
 
 def insert_nordpool_prices(starttime,endtime,price):
     try:
@@ -132,42 +133,7 @@ def append_new_battery(id):
     except mysql.connector.Error as error:
         logger.error("Failed to insert into MySQL table {}".format(error))
 
-def insert_battery_info(id,status,startime,endtime):
-    try:
-        cursor = connection.cursor()
-        mySql_insert_query = """INSERT INTO battery_info (`id`,`startime`,`endtime`,`capacity`,`KW`,`price`,`status`) VALUES (%s,%s,%s,%s,%s,%s,%s) """  
-        price = """select best_price from connection where left(startime,13)= left(%s,13) order by startime desc limit 1 """   
-        cursor.execute(price, [startime])  
-        price = cursor.fetchall()
-        cap= """Select capacity from battery_info where left(startime,13)= left(%s,13) and id=%s order by startime DESC limit 1  """
-        cursor.execute(cap, [startime,id])
-        cap = cursor.fetchall()
-        if bool(cap)== False:
-            cap="select max_capacity from battery where id=%s"
-            cursor.execute(cap, [id])
-            cap = cursor.fetchall()
-        if status==1:
-            kw = """SELECT consumption FROM total_consumption where left(startime,13)= left(%s,13) order by startime DESC limit 1"""
-            cursor.execute(kw, [startime])
-            kw1 = cursor.fetchall()
-            record = (id,startime,endtime,float(cap[0][0])-float(kw1[0][0]),kw1[0][0],price[0][0],1)
-            cursor.execute(mySql_insert_query, record)
-            connection.commit()
-            logger.info("inserted successfully")
-        if status ==0:
-            max_cap= select_battery(id)
-            max_cap = max_cap[0][1]
-            kw=random.uniform(1,25)
-            if max_cap < cap[0][0]+kw:
-                kw6=(cap[0][0]+kw)-max_cap               
-                record = (id,startime,endtime,max_cap,kw6,price[0][0],0)
-            else:
-                record = (id,startime,endtime,cap[0][0]+kw,kw,price[0][0],0)
-            cursor.execute(mySql_insert_query,record)
-            connection.commit()
-            logger.info("inserted successfully")
-    except mysql.connector.Error as error:
-        logger.error("Failed to insert into MySQL table {}".format(error)) 
+
 # hopefully done
 def select_battery_info(id):
     try:
@@ -182,11 +148,11 @@ def select_battery_info(id):
         
 def get_battery_sum(id,startime):
     try:
-        sql_select_Query = "select sum(kw) from battery_info where id = %s and `status`=0 and left(startime,10)=left(%s,10);"
+        sql_select_Query = "select * from battery_info where id = %s and `status`=0 and startime=%s;"
         cursor = connection.cursor()
         cursor.execute(sql_select_Query,(id,startime))
         records = cursor.fetchall()
-        return records[0][0]
+        return records
         # print(records)
     except mysql.connector.Error as e:
         logger.error("Error using select_bateryinfo", e)
@@ -222,7 +188,7 @@ def connection_update(id, startime):
 
 def get_consumption(startime):
     try:
-        sql_select_Query = "select consumption from total_consumption where left(startime,10) = left(%s,10) order by startime desc limit 1;"
+        sql_select_Query = "select consumption from total_consumption where startime=%s limit 1;"
         cursor = connection.cursor()
         cursor.execute(sql_select_Query,(startime,))
         records = cursor.fetchall()
@@ -244,29 +210,41 @@ def getprice(startime):
 def get_status(id,startime):
     try:
         cursor = connection.cursor()
-        price="select status from battery_info where left(startime,10)=left(%s,10) and id=%s order by startime desc limit 1"
+        price="select status from battery_info where startime=%s and id=%s order by startime desc limit 1"
         cursor.execute(price,(startime,id))
         records = cursor.fetchall()
-        return records[0][0]
+        return records
     except mysql.connector.Error as e:
         logger.error("Error using select_batery_info", e)
-def battery_controller(startime,endtime):
+
+
+def battery_controller(id,startime,endtime):
     try:
-        max_price=get_highest(startime)
-        min_price=get_lowest(startime)
-        if max_price[0][1]==startime:
-            connection_update(id, startime)
-            insert_battery_info(3,1,startime,endtime)
-        if min_price[0][1]==startime:
-            insert_battery_info(3,1,startime,endtime)
+        now=datetime.now()
+        dateOfInterest = now.strftime('%Y-%m-%d')
+        datetime_object = datetime.strptime(dateOfInterest, '%Y-%m-%d')
+        dates=get_dates(datetime_object)
+        for i in range(0,len(dates)):
+            startime=dates[i][0]
+            endtime=dates[i][1]
+            max_price=get_highest(startime)
+            min_price=get_lowest(startime)
+            print("check if function")
+            if max_price[0][1]==startime: # here
+                print("max if check")
+                connection_update(id, startime)
+                insert_battery_info(3,1,startime,endtime)
+            if min_price[0][1]==startime: # here
+                print("mix if check")
+                insert_battery_info(3,1,startime,endtime)
     except mysql.connector.Error as e:
         logger.error("Error using select_batery_info", e)
 
 def get_dates(startime):
     try:
         cursor = connection.cursor()
-        price="select startime,endtime from connection left(startime,10)=left(%s,10) "
-        cursor.execute(price,(startime))
+        price="select startime,endtime from connection where left(startime,10)=left(%s,10) "
+        cursor.execute(price,(startime,))
         records = cursor.fetchall()
         return records
     except mysql.connector.Error as e:
@@ -287,21 +265,76 @@ def total_cost(id):
             consumption=get_consumption(startime)
             status=get_status(id,startime)
             battery_consumption=get_battery_sum(id,startime)
-            if status==1:
+            if bool(status)==False:
                 cursor = connection.cursor()
                 mySql_insert_query = """INSERT INTO total_cost (startime,endtime,price,consumption,expenses) 
                 VALUES (%s,%s,%s,%s,%s) """  
                 record = (startime,endtime,price,consumption,price*consumption)
                 cursor.execute(mySql_insert_query, record)
                 connection.commit()
-                logger.info("inserted successfully")    
-            if status==0:
-                cursor = connection.cursor()
-                mySql_insert_query = """INSERT INTO total_cost (startime,endtime,price,consumption,expenses) 
-                VALUES (%s,%s,%s,%s,%s) """       
-                record = (startime,endtime,price,consumption+battery_consumption,price*(consumption+battery_consumption))
-                cursor.execute(mySql_insert_query, record)
+                logger.info("inserted successfully")
+            else:
+                if status[0][0]==1:
+                    cursor = connection.cursor()
+                    mySql_insert_query = """INSERT INTO total_cost (startime,endtime,price,consumption,expenses) 
+                    VALUES (%s,%s,%s,%s,%s) """  
+                    record = (startime,endtime,price,consumption,0*consumption)
+                    cursor.execute(mySql_insert_query, record)
+                    connection.commit()
+                    logger.info("inserted successfully")    
+                if status[0][0]==0:
+                    if startime==battery_consumption[0][0]:
+                        cursor = connection.cursor()
+                        mySql_insert_query = """INSERT INTO total_cost (startime,endtime,price,consumption,expenses) 
+                        VALUES (%s,%s,%s,%s,%s) """       
+                        record = (startime,endtime,price,consumption+battery_consumption,price*(consumption+battery_consumption))
+                        cursor.execute(mySql_insert_query, record)
+                        connection.commit()
+                        logger.info("inserted successfully")
+                    else:
+                        cursor = connection.cursor()
+                        mySql_insert_query = """INSERT INTO total_cost (startime,endtime,price,consumption,expenses) 
+                        VALUES (%s,%s,%s,%s,%s) """       
+                        record = (startime,endtime,price,consumption+battery_consumption,price*consumption)
+                        cursor.execute(mySql_insert_query, record)
+                        connection.commit()
+                        logger.info("inserted successfully")    
+    except mysql.connector.Error as e:
+        logger.error("Error using select_batery_info", e) 
+
+def insert_battery_info(id,status,startime,endtime,price):
+    try:
+        cursor=connection.cursor()
+        main_query="""insert into battery_info (`id`,startime,endtime,capacity,kw,price,status) values(%s,%s,%s,%s,%s,%s,%s)"""
+        cap_query="""select capacity from battery_info where startime=%s and id=%s order by startime desc limit 1 """
+        cursor.execute(cap_query,[startime,id])
+        cap=cursor.fetchall()
+        if bool(cap)== False:
+            cap_query="""select max_capacity from battery where  id=%s limit 1 """
+            cursor.execute(cap_query,[id,])
+            cap=cursor.fetchall()
+            if status==1:
+                kw = """SELECT consumption FROM total_consumption where left(startime,13)= left(%s,13) order by startime DESC limit 1"""
+                cursor.execute(kw, [startime])
+                kw1 = cursor.fetchall()
+                record = (id,startime,endtime,float(cap[0][0])-float(kw1[0][0]),kw1[0][0],price[0][0],1)
+                cursor.execute(main_query, record)
                 connection.commit()
-                logger.info("inserted successfully")    
+                logger.info("inserted successfully")
+            if status ==0:
+                max_cap= select_battery(id)
+                max_cap = max_cap[0][1]
+                kw=random.uniform(1,25)
+                if max_cap < cap[0][0]+kw:
+                    kw6=(cap[0][0]+kw)-max_cap               
+                    record = (id,startime,endtime,max_cap,kw6,price[0][0],0)
+                    cursor.execute(main_query,record)
+                    connection.commit()
+                    logger.info("inserted successfully")
+                else:
+                    record = (id,startime,endtime,cap[0][0]+kw,kw,price[0][0],0)
+                    cursor.execute(main_query,record)
+                    connection.commit()
+                    logger.info("inserted successfully")
     except mysql.connector.Error as e:
         logger.error("Error using select_batery_info", e) 

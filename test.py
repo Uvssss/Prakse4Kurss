@@ -19,7 +19,7 @@ insert()
 # now=datetime.now()
 # dateOfInterest = now.strftime('%Y-%m-%d %H:%M:%S')
 # startime = datetime.strptime(dateOfInterest, '%Y-%m-%d %H:%M:%S')
-
+# print(get_dates(startime))
 # print(str(startime)[0:14])
 # select_consumption('2023-02-07 11:50:38')
 # get_consumption('2023-02-07 12:21:16')

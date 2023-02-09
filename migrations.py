@@ -181,28 +181,6 @@ for migration in migrations_list:
 if counter == 0:
 	logger.info("No migrations to execute")	
 
-def trigger():
-	try: 
-		cursor.execute("drop trigger if exists `trigger`")
-		trigger = """
-		create trigger `trigger` after insert
-        on total_consumption for each row
-        begin
-            set @startime=(select startime from total_consumption order by startime desc limit 1);
-            set @endtime=(select endtime from total_consumption order by startime desc limit 1);
-            set @cons=(select consumption from total_consumption order by startime desc limit 1);
-            set @price=(select best_price from connection where left(startime,13)=left(@startime,13) limit 1);
-            set @expenses=(select @price*@cons);
-            INSERT INTO electricityprice.total_cost
-                (startime,endtime,price,consumption,expenses) VALUES
-                (@startime,@endtime,@price,@cons,@expenses);
-        end"""
-		cursor.execute(trigger)
-		connection.commit()
-		logger.info("trigger made")
-	except mysql.connector.Error as err:
-		logger.error("No connection to db " + str(err))
-
 def establish_conn():
 	try:
 		cursor.execute("drop trigger if exists `establish_connection`")
@@ -234,4 +212,3 @@ def establish_conn():
 		logger.error("No connection to db " + str(err))
 
 establish_conn()
-# trigger()
