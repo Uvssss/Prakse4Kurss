@@ -2,15 +2,30 @@ from main import *
 import requests
 import json
 from datetime import datetime,timedelta
-config = ConfigParser()
-config.read('config.ini')
-mysql_config_mysql_host = config.get('mysql_config', 'mysql_host')
-mysql_config_mysql_db = config.get('mysql_config', 'mysql_db')
-mysql_config_mysql_user = config.get('mysql_config', 'mysql_user')
-mysql_config_mysql_pass = config.get('mysql_config', 'mysql_pass')
-connection = mysql.connector.connect(host=mysql_config_mysql_host, database=mysql_config_mysql_db, user=mysql_config_mysql_user, password=mysql_config_mysql_pass)
+with open('./log_worker.yaml', 'r') as stream:
+    config = yaml.safe_load(stream)
+
+logging.config.dictConfig(config)
+
+# Creating logger
 logger = logging.getLogger('root')
 
+logger.info('DB migration service')
+
+# Initiating and reading config values
+logger.info('Loading configuration from file')
+try:
+	config = ConfigParser()
+	config.read('config.ini')
+
+	mysql_config_mysql_host = config.get('mysql_config', 'mysql_host')
+	mysql_config_mysql_db = config.get('mysql_config', 'mysql_db')
+	mysql_config_mysql_user = config.get('mysql_config', 'mysql_user')
+	mysql_config_mysql_pass = config.get('mysql_config', 'mysql_pass')
+except:
+	logger.error('Incorrect Credentials')
+logger.info('DONE')
+connection = mysql.connector.connect(host=mysql_config_mysql_host, database=mysql_config_mysql_db, user=mysql_config_mysql_user, password=mysql_config_mysql_pass)
 
 def insert():        
     print('Function start')
@@ -148,7 +163,7 @@ def select_battery_info(id):
         
 def get_battery_sum(id,startime):
     try:
-        sql_select_Query = "select * from battery_info where id = %s and `status`=0 and startime=%s;"
+        sql_select_Query = "select kw from battery_info where id = %s and `status`=0 and startime=%s;"
         cursor = connection.cursor()
         cursor.execute(sql_select_Query,(id,startime))
         records = cursor.fetchall()
@@ -237,7 +252,7 @@ def battery_controller(id):
                 insert_battery_info(3,1,startime,endtime,price)
             if min_price[0][1]==startime: # here
                 print("mix if check")
-                insert_battery_info(3,1,startime,endtime,price)
+                insert_battery_info(3,0,startime,endtime,price)
     except mysql.connector.Error as e:
         logger.error("Error using select_batery_info", e)
 
@@ -296,7 +311,7 @@ def total_cost(id):
                         cursor = connection.cursor()
                         mySql_insert_query = """INSERT INTO total_cost (startime,endtime,price,consumption,expenses) 
                         VALUES (%s,%s,%s,%s,%s) """       
-                        record = (startime,endtime,price,consumption+battery_consumption,price*consumption)
+                        record = (startime,endtime,price,consumption+battery_consumption[0][0],price*(consumption+battery_consumption[0][0]))
                         cursor.execute(mySql_insert_query, record)
                         connection.commit()
                         logger.info("inserted successfully")    
@@ -325,17 +340,20 @@ def insert_battery_info(id,status,startime,endtime,price):
         if status ==0:
             max_cap= select_battery(id)
             max_cap = max_cap[0][1]
-            kw=random.uniform(1,25)
-            if max_cap < cap[0][0]+kw:
-                kw6=(cap[0][0]+kw)-max_cap               
-                record = (id,startime,endtime,max_cap,kw6,price,0)
-                cursor.execute(main_query,record)
-                connection.commit()
-                logger.info("inserted successfully")
+            kw=random.uniform(1,float(config.get("battery","chargepower"))) # lets hope this doesnt bleed
+            if cap[0][0]!= max_cap: 
+                if max_cap < cap[0][0]+kw:
+                    kw6=(cap[0][0]+kw)-max_cap               
+                    record = (id,startime,endtime,max_cap,kw6,price,0)
+                    cursor.execute(main_query,record)
+                    connection.commit()
+                    logger.info("inserted successfully")
+                else:
+                    record = (id,startime,endtime,cap[0][0]+kw,kw,price,0)
+                    cursor.execute(main_query,record)
+                    connection.commit()
+                    logger.info("inserted successfully")
             else:
-                record = (id,startime,endtime,cap[0][0]+kw,kw,price,0)
-                cursor.execute(main_query,record)
-                connection.commit()
-                logger.info("inserted successfully")
+                logger.info("Battery is full.")
     except mysql.connector.Error as e:
         logger.error("Error using select_batery_info", e) 
