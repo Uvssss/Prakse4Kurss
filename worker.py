@@ -10,7 +10,7 @@ logging.config.dictConfig(config)
 # Creating logger
 logger = logging.getLogger('root')
 
-logger.info('DB migration service')
+logger.info('Worker service')
 
 # Initiating and reading config values
 logger.info('Loading configuration from file')
@@ -29,7 +29,6 @@ connection = mysql.connector.connect(host=mysql_config_mysql_host, database=mysq
 
 def insert():        
     print('Function start')
-    append_new_battery(3)
     now=datetime.now()
     response = requests.get('https://www.nordpoolgroup.com/api/marketdata/page/59?currency=,,,EUR')
     dateOfInterest = now.strftime('%d-%m-%Y')
