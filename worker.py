@@ -33,27 +33,50 @@ def insert():
     response = requests.get('https://www.nordpoolgroup.com/api/marketdata/page/59?currency=,,,EUR')
     dateOfInterest = now.strftime('%d-%m-%Y')
     jayson = json.loads (response.text)
-
+    main_array=[]
     for row in jayson ['data']['Rows'] :
         if row['IsExtraRow']:
             continue
         for dayData in row[ 'Columns']:
             if (dayData[ 'Name'] != dateOfInterest):
                 continue
-            sSplit = row[ 'StartTime'].replace('T', ' ')  
-            eSplit = row[ 'EndTime'].replace('T', ' ')    
-            value=dayData['Value'].replace(",",".") 
+            date=dayData["Name"]
+            date=datetime.strptime(date,"%d-%m-%Y")
+            date=date.date()
+            starttime=row["StartTime"].split("T") # steal time from starttime and endtime
+            endtime=row["EndTime"].split("T")
+            value=dayData['Value'].replace(",",".")
+            sSplit=str(date)+" "+starttime[1]
+            eSplit=str(date)+" "+endtime[1]
             sSplit = datetime.strptime(sSplit,"%Y-%m-%d %H:%M:%S") 
             eSplit = datetime.strptime(eSplit,"%Y-%m-%d %H:%M:%S") 
-            # sSplit=sSplit - timedelta(days=1)
-            # eSplit=eSplit - timedelta(days=1)
             value=float(value)
             converted_val=value/1000
-            insert_nordpool_prices(sSplit,eSplit,converted_val)
-            create_consumtion(sSplit,eSplit)
+            temp_array=[sSplit,eSplit,converted_val]
+            main_array.append(temp_array)
+    last_array= main_array.pop()
+    last_array[1]=last_array[1]+timedelta(days=1)
+    main_array.append(last_array)
+    for i in range(0,len(main_array)):
+        sSplit=main_array[i][0]
+        eSplit=main_array[i][1]
+        value=main_array[i][2]
+        insert_nordpool_prices(sSplit,eSplit,value)
+        create_consumtion(sSplit,eSplit)
     battery_controller(3)
     total_cost(3)
     print("Function end")
+
+def check_battery(id):
+    try:
+        sql_select_Query = "select * from battery where id=%s"
+        cursor = connection.cursor()
+        cursor.execute(sql_select_Query,(id,))
+        records = cursor.fetchall()
+        return records
+    except mysql.connector.Error as e:
+        logger.error("Error using select_prices", e)
+
 
 def insert_nordpool_prices(starttime,endtime,price):
     try:
