@@ -1,8 +1,1 @@
-make program kas saladzina birzas cenu north pool, labako statiska elektribas cenu
-get north pool cena
 
-
-
-https://www.nordpoolgroup.com/en/Market-data1/Power-system-data/Production1/Production1/LV/Hourly/?view=table
-
-It is already filtered data. when finding data with find using "LV" it will find min  max avg peak utt
